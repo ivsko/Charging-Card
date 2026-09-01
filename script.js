@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка за Въглерод (C)
     const diffC = currentC - targetC;
     if (Math.abs(diffC) > 0.1) {
-      if (diffC < 0) advice.push(`🔹 Въглеродът е нисък. Добавете <strong>${Math.abs((diffC * totalW) / 98).toFixed(1)} kg</strong> Науглеродител.`);
-      else advice.push(`🔴 Въглеродът е висок! Намалете науглеродителя или увеличете скрапа.`);
+      if (diffC < 0) advice.push(`🔹 Въглеродът е нисък. Добавете <strong>${Math.abs((diffC * totalW) / 98).toFixed(1)} kg</strong> Навъглеродител.`);
+      else advice.push(`🔴 Въглеродът е висок! Намалете навъглеродителя или увеличете скрапа.`);
     }
 
     // Проверка за Силиций (Si)
