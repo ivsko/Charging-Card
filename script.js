@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const targetMeltWeight = document.getElementById('targetMeltWeight');
   const targetWeightDisplay = document.getElementById('targetWeightDisplay');
   const targetGradeSelect = document.getElementById('targetGrade');
+  const swampGradeSelect = document.getElementById('swampGrade'); // Падащо меню за марката на блатото
   
   const swampWeightInput = document.getElementById('swampWeight');
   const tableSwampText = document.getElementById('tableSwampText');
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pctFeMn = document.getElementById('pctFeMn');
   const pctCu = document.getElementById('pctCu');
 
-  // Масив с всички полета за въвеждане
+  // Масив с всички полета за въвеждане на тегла
   const allInputs = [
     swampWeightInput, scrapInput, returnGjsInput, returnGjlInput, 
     pigIronInput, cInput, fesiInput, femnInput, cuInput
@@ -57,11 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const capacity = btn.getAttribute('data-capacity');
       targetMeltWeight.value = capacity;
       targetWeightDisplay.textContent = capacity;
-      updateScaleDynamic(); // Обновява кантара при смяна на пещта
+      updateScaleDynamic();
     });
   });
 
-  // 2. СМЯНА НА МАРКА
+  // 2. СМЯНА НА ЦЕЛЕВА МАРКА
   targetGradeSelect.addEventListener('change', () => {
     updateTargetsDisplay();
   });
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     targetCu.textContent = `Цел: ${targets.Cu.toFixed(2)}%`;
   }
 
-  // 3. ДИНАМИЧЕН КАНТАР (Работи в реално време докато се въвежда)
+  // 3. ДИНАМИЧЕН КАНТАР (Работи в реално време при писане)
   function updateScaleDynamic() {
     const targetW = parseFloat(targetMeltWeight.value) || 10000;
     
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const totalW = swampW + scrapW + retGjsW + retGjlW + pigW + cW + fesiW + femnW + cuW;
     totalWeightDisplay.textContent = totalW;
-    tableSwampText.textContent = swampW; // Обновява текста на блатото в таблицата
+    tableSwampText.textContent = swampW; // Пренася теглото на блатото в таблицата
 
     function getPct(val) {
       return totalW > 0 ? ((val / totalW) * 100).toFixed(1) + '%' : '0.0%';
@@ -126,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Прикачаме динамичния кантар към всяко поле за въвеждане
   allInputs.forEach(input => {
     input.addEventListener('input', updateScaleDynamic);
   });
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     femnInput.value = 0;
     cuInput.value = 0;
     
-    updateScaleDynamic(); // Извикваме го, за да занули кантара
+    updateScaleDynamic();
     
     valC.textContent = "0.00%";
     valSi.textContent = "0.00%";
@@ -175,29 +175,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const femnW = parseFloat(femnWeightInput.value) || 0;
     const cuW = parseFloat(cuInput.value) || 0;
 
+    // Взимаме състава на блатото директно от избраното падащо меню (swampGrade)
+    const swampGradeVal = swampGradeSelect.value;
+    const swampComposition = TARGET_GRADES[swampGradeVal] || TARGET_GRADES['gjs500'];
+
     // 🔬 РЕАЛЕН МАСОВ БАЛАНС (КГ ЕЛЕМЕНТ / ОБЩО КГ В ПЕЩТА)
-    let totalCKg = (swampW * MATERIALS_DATA.swamp.C / 100) + 
+    let totalCKg = (swampW * swampComposition.C / 100) + 
                    (scrapW * MATERIALS_DATA.scrap.C / 100) + 
                    (retGjsW * MATERIALS_DATA.returnGjs.C / 100) + 
                    (retGjlW * MATERIALS_DATA.returnGjl.C / 100) + 
                    (pigW * MATERIALS_DATA.pigIron.C / 100) + 
                    (cW * MATERIALS_DATA.carbonizer.yield); 
 
-    let totalSiKg = (swampW * MATERIALS_DATA.swamp.Si / 100) + 
+    let totalSiKg = (swampW * swampComposition.Si / 100) + 
                     (scrapW * MATERIALS_DATA.scrap.Si / 100) + 
                     (retGjsW * MATERIALS_DATA.returnGjs.Si / 100) + 
                     (retGjlW * MATERIALS_DATA.returnGjl.Si / 100) + 
                     (pigW * MATERIALS_DATA.pigIron.Si / 100) + 
                     (fesiW * 0.75 * MATERIALS_DATA.fesi.yield); 
 
-    let totalMnKg = (swampW * MATERIALS_DATA.swamp.Mn / 100) + 
+    let totalMnKg = (swampW * swampComposition.Mn / 100) + 
                     (scrapW * MATERIALS_DATA.scrap.Mn / 100) + 
                     (retGjsW * MATERIALS_DATA.returnGjs.Mn / 100) + 
                     (retGjlW * MATERIALS_DATA.returnGjl.Mn / 100) + 
                     (pigW * MATERIALS_DATA.pigIron.Mn / 100) + 
                     (femnW * 0.75 * MATERIALS_DATA.femn.yield); 
 
-    let totalCuKg = (swampW * MATERIALS_DATA.swamp.Cu / 100) + 
+    let totalCuKg = (swampW * swampComposition.Cu / 100) + 
                     (scrapW * MATERIALS_DATA.scrap.Cu / 100) + 
                     (retGjsW * MATERIALS_DATA.returnGjs.Cu / 100) + 
                     (retGjlW * MATERIALS_DATA.returnGjl.Cu / 100) + 
@@ -256,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     operatorAdvice.textContent = adviceText;
   }
 
-  // Инициализация при старт
+  // Първоначална инициализация при зареждане на страницата
   updateTargetsDisplay();
   updateScaleDynamic(); 
 });
