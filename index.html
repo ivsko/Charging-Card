@@ -3,202 +3,204 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FoundryIQ — Шихтова Карта</title>
+  <title>FoundryIQ - Шихтова Карта</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
+  <!-- ГОРЕН ХЕДЪР С ЛОГО И ЗАГЛАВИЕ -->
+  <header class="top-header">
     <div class="logo-box">
-      <span class="fire-icon">🔥</span>
-      <h1 class="header-title">FoundryIQ <span class="badge">OPERATOR CONTROL</span></h1>
+      <!-- Истинско PNG лого от папката images -->
+      <img src="bg.png" alt="Лого Леярна" class="plant-logo">
+      
+      <h1 class="logo-title">
+        FoundryIQ 
+        <span class="badge-orange">ВЕРСИЯ 2.0</span>
+      </h1>
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main>
-    <!-- КОЛОНА 1: ПЕЩ & БЛАТО -->
-    <section class="col-1">
-      <div class="card">
-        <div>
-          <div class="card-title"><span class="step-num">1</span> Пещ & Блато</div>
-
-          <div class="form-group">
-            <label>Избор на пещ</label>
-            <div class="furnace-grid">
-              <button type="button" class="furnace-btn" data-capacity="10000">10 t</button>
-              <button type="button" class="furnace-btn" data-capacity="8000">8 t</button>
-              <button type="button" class="furnace-btn active-furnace" data-capacity="2500">2.5 t</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Целева марка чугун</label>
-            <select id="targetGrade" class="input-field">
-              <option value="gjs500">EN-GJS-500-7 (C:3.6, Si:2.5, Mn:0.4, Cu:0.5)</option>
-              <option value="gjl200">EN-GJL-200 (C:3.3, Si:2.1, Mn:0.6, Cu:0.2)</option>
-              <option value="gjs400">EN-GJS-400-15 (C:3.7, Si:2.6, Mn:0.2, Cu:0.0)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Целево тегло на стопилката (kg)</label>
-            <input type="number" id="targetWeight" value="2500" class="input-field">
-          </div>
-
-          <div style="background: rgba(217, 119, 6, 0.15); border: 1.5px solid #d97706; padding: 10px; border-radius: 10px;" class="form-group">
-            <label style="color: #fbbf24; font-weight: 900;">🌊 ОСТАТЪК В ПЕЩТА (БЛАТО)</label>
-            <select id="swampGrade" class="input-field" style="background: #fef3c7; margin-bottom: 8px;">
-              <option value="gjs500">Блато от GJS-500-7</option>
-              <option value="gjl200">Блато от GJL-200</option>
-              <option value="gjs400">Блато от GJS-400-15</option>
-            </select>
-            <label style="color: #fbbf24;">Тегло на блатото (kg)</label>
-            <input type="number" id="swampWeight" value="350" class="input-field" style="background: #fef3c7;">
+  <!-- ОСНОВЕН ДАШБОРД -->
+  <main class="dashboard-grid">
+    
+    <!-- КОЛОНА 1: ПЕЩ И БЛАТО -->
+    <div class="panel">
+      <div>
+        <h2><span class="step-num">1</span> ПЕЩ & БЛАТО</h2>
+        
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Избор на пещ</label>
+          <div class="furnace-grid">
+            <button type="button" class="furnace-btn active-furnace" data-capacity="10000">10 t</button>
+            <button type="button" class="furnace-btn" data-capacity="8000">8 t</button>
+            <button type="button" class="furnace-btn" data-capacity="2500">2.5 t</button>
           </div>
         </div>
 
-        <div style="border-top: 2px solid #1e293b; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
-          <span style="color: #94a3b8;">Общо в пещта:</span>
-          <span style="color: #ffffff;"><span id="totalWeightDisplay">0</span> / <span id="targetWeightDisplay">2500</span> kg</span>
+        <input type="number" id="targetMeltWeight" value="10000" style="display: none;">
+
+        <div class="form-group">
+          <label>Целева марка чугун</label>
+          <select id="targetGrade" class="input-field">
+            
+            <option value="gjl200">EN-GJL-200</option>
+            <option value="gjl300">EN-GJL-300</option>
+            <option value="gjs400">EN-GJS-400</option>
+            <option value="gjs500">EN-GJS-500</option>
+          </select>
+        </div>
+
+        <div class="swamp-card">
+          <h3>💧 ОСТАТЪК В ПЕЩТА (БЛАТО)</h3>
+          
+          <div class="form-group">
+            <label>Марка на остатъка</label>
+            <select id="swampGrade" class="input-field">
+              
+              <option value="gjl200">Блато от GJL-200</option>
+              <option value="gjl300">Блато от GJL-300</option>
+              <option value="gjs400">Блато от GJS-400-15</option>
+              <option value="gjs500">Блато от GJS-500-7</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Тегло на блатото (kg)</label>
+            <input type="number" id="swampWeight" class="input-field" value="2000">
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+
 
     <!-- КОЛОНА 2: ШИХТОВ СЪСТАВ -->
-    <section class="col-2">
-      <div class="card">
-        <div>
-          <div class="card-title"><span class="step-num">2</span> Шихтов състав</div>
+    <div class="panel center-panel">
+      <div>
+        <h2><span class="step-num">2</span> ШИХТОВ СЪСТАВ</h2>
 
-          <table>
-            <thead>
-              <tr>
-                <th>МАТЕРИАЛ ЗА ЗАРЕЖДАНЕ</th>
-                <th style="width: 100px; text-align: center;">ТЕГЛО (KG)</th>
-                <th style="text-align: right; width: 50px;">%</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="background: rgba(217, 119, 6, 0.2);">
-                <td style="color: #fbbf24; font-weight: 900;">🌊 Блато (от предишна заварка)</td>
-                <td style="color: #fbbf24; font-weight: 900; text-align: center; font-size: 14px;" id="tableSwampWeight">350 kg</td>
-                <td style="text-align: right; font-weight: 900; color: #fbbf24; font-size: 14px;" id="tableSwampPct">14%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Стоманен скрап</td>
-                <td><input type="number" value="1000" class="mat-input table-input" data-c="0.1" data-si="0.15" data-mn="0.4" data-cu="0.05"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Собствен леяк</td>
-                <td><input type="number" value="950" class="mat-input table-input" data-c="3.6" data-si="2.5" data-mn="0.4" data-cu="0.5"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-              <tr style="background: rgba(249, 115, 22, 0.1);">
-                <td style="color: #fdba74; font-weight: 900;">🏷️ Нов чугун (Мин. 3%)</td>
-                <td><input type="number" id="pigIronWeight" value="75" class="mat-input table-input" style="background: #ffedd5;" data-c="4.2" data-si="1.2" data-mn="0.1" data-cu="0.0"></td>
-                <td style="text-align: right; font-weight: 900; color: #fdba74;" class="mat-pct">0%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Науглеродител (C)</td>
-                <td><input type="number" value="30" class="mat-input table-input" data-c="98" data-si="0" data-mn="0" data-cu="0"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Феросилиций (FeSi75)</td>
-                <td><input type="number" value="18" class="mat-input table-input" data-c="0" data-si="75" data-mn="0" data-cu="0"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Фероманган (FeMn75)</td>
-                <td><input type="number" value="5" class="mat-input table-input" data-c="1" data-si="0" data-mn="75" data-cu="0"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">Мед (Cu)</td>
-                <td><input type="number" value="10" class="mat-input table-input" data-c="0" data-si="0" data-mn="0" data-cu="99"></td>
-                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
-              </tr>
-            </tbody>
-          </table>
+        <table class="charging-table" style="margin-top: 14px;">
+          <thead>
+            <tr>
+              <th>МАТЕРИАЛ ЗА ЗАРЕЖДАНЕ</th>
+              <th class="th-weight">ТЕГЛО (KG)</th>
+              <th class="th-pct">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tr-swamp">
+              <td>💧 Блато (от предишна плавка)</td>
+              <td class="td-swamp-val"><span id="tableSwampText">2000</span> kg</td>
+              <td class="td-swamp-pct"><span id="pctSwamp">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Стоманен скрап</td>
+              <td><input type="number" id="scrapWeightInput" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctScrap">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Възврат - сферографитен чугун</td>
+              <td><input type="number" id="returnGjsWeight" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctReturnGjs">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Възврат - сив чугун</td>
+              <td><input type="number" id="returnGjlWeight" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctReturnGjl">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>🔥 Нов чугун</td>
+              <td><input type="number" id="pigIronWeight" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctPigIron">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Навъглеродител (C)</td>
+              <td><input type="number" id="cWeightInput" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctC">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Феросилиций (FeSi75)</td>
+              <td><input type="number" id="fesiWeightInput" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctFeSi">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Фероманган (FeMn75)</td>
+              <td><input type="number" id="femnWeightInput" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctFeMn">0.0%</span></td>
+            </tr>
+            <tr>
+              <td>Мед (Cu)</td>
+              <td><input type="number" id="cuWeightInput" class="input-field" value="0"></td>
+              <td class="mat-pct"><span id="pctCu">0.0%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div class="total-weight-box">
+          <span>Общо в пещта:</span>
+          <span class="weight-num"><span id="totalWeightDisplay">2000</span> / <span id="targetWeightDisplay">10000</span> kg</span>
         </div>
 
-        <!-- Ясна и интуитивна секция за Спектрометър -->
-        <div class="lab-box">
-          <div class="lab-header">
-            <span class="lab-title">🧪 ЕКСПРЕСЕН АНАЛИЗ (СПЕКТРОМЕТЪР)</span>
+        <div id="scaleStatus" class="scale-status under-weight" style="margin-top: 10px; margin-bottom: 10px;">
+          ⚖️ КАНТАР: Заредете материали...
+        </div>
+
+        <div class="actions-bar">
+          <button type="button" id="calculateBtn" class="btn-primary">⚡ ИЗЧИСЛИ ХИМИЯ</button>
+          <button type="button" id="clearAllBtn" class="btn-secondary">🗑️</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- КОЛОНА 3: ИЗЧИСЛЕНА ХИМИЯ -->
+    <div class="panel">
+      <div>
+        <h2><span class="step-num">3</span> ИЗЧИСЛЕНА ХИМИЯ</h2>
+
+        <div class="chem-grid" style="margin-top: 14px;">
+          <div class="chem-card">
+            <div class="chem-title">Въглерод (C) <span id="targetC" class="chem-target">Цел: 3.60%</span></div>
+            <div id="valC" class="chem-val">0.00%</div>
           </div>
-          <div class="lab-hint">
-            💡 Въведете намерените % от лабораторията. Калкулаторът веднага ще изчисли точното количество добавки за корекция.
+
+          <div class="chem-card">
+            <div class="chem-title">Силиций (Si) <span id="targetSi" class="chem-target">Цел: 2.50%</span></div>
+            <div id="valSi" class="chem-val">0.00%</div>
           </div>
-          <div class="lab-grid">
-            <div class="lab-item">
-              <label>Тегло (kg)</label>
-              <input type="number" id="labMeltWeight" value="2500" class="lab-input">
-            </div>
-            <div class="lab-item">
-              <label>% C</label>
-              <input type="number" step="0.01" id="labC" placeholder="—" class="lab-input">
-            </div>
-            <div class="lab-item">
-              <label>% Si</label>
-              <input type="number" step="0.01" id="labSi" placeholder="—" class="lab-input">
-            </div>
-            <div class="lab-item">
-              <label>% Mn</label>
-              <input type="number" step="0.01" id="labMn" placeholder="—" class="lab-input">
-            </div>
-            <div class="lab-item">
-              <label>% Cu</label>
-              <input type="number" step="0.01" id="labCu" placeholder="—" class="lab-input">
-            </div>
+
+          <div class="chem-card">
+            <div class="chem-title">Манган (Mn) <span id="targetMn" class="chem-target">Цел: 0.40%</span></div>
+            <div id="valMn" class="chem-val">0.00%</div>
+          </div>
+
+          <div class="chem-card">
+            <div class="chem-title">Мед (Cu) <span id="targetCu" class="chem-target">Цел: 0.50%</span></div>
+            <div id="valCu" class="chem-val">0.00%</div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- КОЛОНА 3: ХИМИЯ & СЪВЕТ -->
-    <section class="col-3">
-      <div class="card">
-        <div>
-          <div class="card-title"><span class="step-num">3</span> Изчислена Химия</div>
-
-          <div class="chem-grid">
-            <div class="chem-item">
-              <div class="chem-header"><span>Въглерод (C)</span> <span>Цел: <span id="targetCVal">3.60%</span></span></div>
-              <div id="valC" class="chem-val" style="color: #34d399;">0.00%</div>
-            </div>
-            <div class="chem-item">
-              <div class="chem-header"><span>Силиций (Si)</span> <span>Цел: <span id="targetSiVal">2.50%</span></span></div>
-              <div id="valSi" class="chem-val" style="color: #fbbf24;">0.00%</div>
-            </div>
-            <div class="chem-item">
-              <div class="chem-header"><span>Манган (Mn)</span> <span>Цел: <span id="targetMnVal">0.40%</span></span></div>
-              <div id="valMn" class="chem-val" style="color: #22d3ee;">0.00%</div>
-            </div>
-            <div class="chem-item">
-              <div class="chem-header"><span>Мед (Cu)</span> <span>Цел: <span id="targetCuVal">0.50%</span></span></div>
-              <div id="valCu" class="chem-val" style="color: #fb7185;">0.00%</div>
-            </div>
-          </div>
-
-          <div class="advice-card">
-            <div class="advice-title">📢 ИНСТРУКЦИЯ ЗА ОПЕРАТОРА</div>
-            <div id="operatorAdvice" class="advice-body">Изчисляване...</div>
-          </div>
-        </div>
+      <div class="advice-box" style="margin-top: 14px;">
+        <div class="advice-title">📢 ИНСТРУКЦИЯ ЗА ОПЕРАТОРА</div>
+        <div id="operatorAdvice">Нагласете теглата до получаване на зелен кантар и натиснете "Изчисли Химия".</div>
       </div>
-    </section>
+    </div>
+
   </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <div>FoundryIQ Systems | Шихтов калкулатор за леярни</div>
-    <div>v2.1 (Уедрен UI)</div>
+  <!-- ДОЛЕН ФУТЪР -->
+  <footer class="main-footer">
+    <div class="footer-left">
+      <span>🔥 FoundryIQ System</span> &bull; <span>Всички права запазени</span>
+    </div>
+    <div class="footer-right">
+      Разработено от: <strong style="color: #f97316;">Живко Желязков & инж.Иван Колев</strong>
+    </div>
   </footer>
-
+  <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
