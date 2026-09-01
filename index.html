@@ -1,204 +1,143 @@
-<!DOCTYPE html>
-<html lang="bg" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FoundryIQ — Шихтова Карта</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans p-3 h-screen overflow-hidden flex flex-col justify-between">
+document.addEventListener('DOMContentLoaded', () => {
+  const gradesDB = {
+    gjs500: { name: 'EN-GJS-500-7', c: 3.60, si: 2.50, mn: 0.40, cu: 0.50 },
+    gjl200: { name: 'EN-GJL-200',     c: 3.30, si: 2.10, mn: 0.60, cu: 0.20 },
+    gjs400: { name: 'EN-GJS-400-15',  c: 3.70, si: 2.60, mn: 0.20, cu: 0.00 }
+  };
 
-  <!-- HEADER -->
-  <header class="flex justify-between items-center border-b border-slate-800 pb-2">
-    <div class="flex items-center gap-3">
-      <div class="bg-orange-500 p-2 rounded-xl text-slate-950 font-black text-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-        🔥
-      </div>
-      <div>
-        <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-2">FoundryIQ <span class="text-xs bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded font-mono font-bold uppercase">PRO MAX</span></h1>
-      </div>
-    </div>
-  </header>
+  const furnaceBtns = document.querySelectorAll('.furnace-btn');
+  const targetWeightInput = document.getElementById('targetWeight');
+  const targetGradeSelect = document.getElementById('targetGrade');
+  const swampGradeSelect = document.getElementById('swampGrade');
+  const swampWeightInput = document.getElementById('swampWeight');
+  const pigIronInput = document.getElementById('pigIronWeight');
+  const matInputs = document.querySelectorAll('.mat-input');
+  const matPctDisplays = document.querySelectorAll('.mat-pct');
 
-  <!-- MAIN CONTAINER (3 КОЛОНИ НА ЕДИН ЕКРАН) -->
-  <main class="grid grid-cols-12 gap-3 my-auto h-[calc(100vh-65px)]">
+  const valC = document.getElementById('valC');
+  const valSi = document.getElementById('valSi');
+  const valMn = document.getElementById('valMn');
+  const valCu = document.getElementById('valCu');
+  const operatorAdvice = document.getElementById('operatorAdvice');
 
-    <!-- КОЛОНА 1: ПЕЩ И БЛАТО -->
-    <section class="col-span-4 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
-      <div class="space-y-3">
-        <h2 class="text-sm font-bold uppercase text-orange-400 tracking-wider flex items-center gap-2">
-          <span class="step-badge">1</span> Пещ & Блато
-        </h2>
+  const labMeltWeight = document.getElementById('labMeltWeight');
+  const labC = document.getElementById('labC');
+  const labSi = document.getElementById('labSi');
+  const labMn = document.getElementById('labMn');
+  const labCu = document.getElementById('labCu');
 
-        <!-- Избор на пещ -->
-        <div>
-          <label class="block text-xs font-bold text-slate-200 mb-1">Вместимост на пещта</label>
-          <div class="grid grid-cols-3 gap-2">
-            <button type="button" class="furnace-btn py-2 px-1 rounded-xl border-2 border-slate-700 bg-slate-950 font-extrabold text-sm text-slate-200" data-capacity="10000">10 t</button>
-            <button type="button" class="furnace-btn py-2 px-1 rounded-xl border-2 border-slate-700 bg-slate-950 font-extrabold text-sm text-slate-200" data-capacity="8000">8 t</button>
-            <button type="button" class="furnace-btn py-2 px-1 rounded-xl border-2 border-slate-700 bg-slate-950 font-extrabold text-sm text-slate-200 active-furnace" data-capacity="2500">2.5 t</button>
-          </div>
-        </div>
+  furnaceBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      furnaceBtns.forEach(b => b.classList.remove('active-furnace'));
+      btn.classList.add('active-furnace');
+      targetWeightInput.value = btn.dataset.capacity;
+      autoSetPigIron();
+      calculate();
+    });
+  });
 
-        <!-- Целева марка и тегло -->
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-xs font-bold text-slate-200 mb-1">Целева марка</label>
-            <select id="targetGrade" class="custom-input w-full rounded-xl px-3 py-2 text-sm font-bold bg-white text-slate-900">
-              <option value="gjs500">EN-GJS-500-7 (C: 3.6%, Si: 2.5%)</option>
-              <option value="gjl200">EN-GJL-200 (C: 3.3%, Si: 2.1%)</option>
-              <option value="gjs400">EN-GJS-400-15 (C: 3.7%, Si: 2.6%)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-200 mb-1">Общо целево тегло (kg)</label>
-            <input type="number" id="targetWeight" value="2500" class="custom-input w-full rounded-xl px-3 py-2 text-base font-black bg-white text-slate-900">
-          </div>
-        </div>
+  function autoSetPigIron() {
+    const targetW = parseFloat(targetWeightInput.value) || 2500;
+    pigIronInput.value = Math.round(targetW * 0.03);
+  }
 
-        <!-- Полета за Блато -->
-        <div class="p-3 bg-amber-950/40 rounded-xl border-2 border-amber-500/50 space-y-2.5">
-          <div class="text-xs font-black uppercase text-amber-400">Остатък в пещта (Блато)</div>
-          <div>
-            <label class="block text-xs font-bold text-amber-300 mb-1">Марка на блатото</label>
-            <select id="swampGrade" class="custom-input w-full rounded-xl px-3 py-1.5 text-xs font-bold bg-amber-100 text-slate-900 border-amber-400">
-              <option value="gjs500">EN-GJS-500-7</option>
-              <option value="gjl200">EN-GJL-200</option>
-              <option value="gjs400">EN-GJS-400-15</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-amber-300 mb-1">Тегло блато (kg)</label>
-            <input type="number" id="swampWeight" value="350" class="custom-input w-full rounded-xl px-3 py-1.5 text-base font-black bg-amber-100 text-amber-950 border-amber-400">
-          </div>
-        </div>
-      </div>
+  function calculate() {
+    const targetWeight = parseFloat(targetWeightInput.value) || 1;
+    const swampWeight = parseFloat(swampWeightInput.value) || 0;
+    
+    const swampData = gradesDB[swampGradeSelect.value] || gradesDB.gjs500;
+    const targetGradeData = gradesDB[targetGradeSelect.value] || gradesDB.gjs500;
+    
+    document.getElementById('targetCVal').innerText = targetGradeData.c.toFixed(2) + '%';
+    document.getElementById('targetSiVal').innerText = targetGradeData.si.toFixed(2) + '%';
+    document.getElementById('targetMnVal').innerText = targetGradeData.mn.toFixed(2) + '%';
+    document.getElementById('targetCuVal').innerText = targetGradeData.cu.toFixed(2) + '%';
+    
+    document.getElementById('tableSwampWeight').innerText = swampWeight + ' kg';
+    document.getElementById('targetWeightDisplay').innerText = targetWeight;
 
-      <div class="pt-2 border-t border-slate-800 text-sm flex justify-between font-bold">
-        <span class="text-slate-400">Общо в пещта:</span>
-        <span class="font-mono font-extrabold text-white text-base"><span id="totalWeightDisplay">0</span> / <span id="targetWeightDisplay">2500</span> kg</span>
-      </div>
-    </section>
+    let addedWeight = 0;
+    let totalC_kg = swampWeight * (swampData.c / 100);
+    let totalSi_kg = swampWeight * (swampData.si / 100);
+    let totalMn_kg = swampWeight * (swampData.mn / 100);
+    let totalCu_kg = swampWeight * (swampData.cu / 100);
 
-    <!-- КОЛОНА 2: ТАБЛИЦА СУРОВИНИ -->
-    <section class="col-span-5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
-      <div>
-        <h2 class="text-sm font-bold uppercase text-orange-400 tracking-wider mb-2 flex items-center gap-2">
-          <span class="step-badge">2</span> Шихтов състав
-        </h2>
+    matInputs.forEach(input => {
+      const weight = parseFloat(input.value) || 0;
+      addedWeight += weight;
+      totalC_kg += weight * (parseFloat(input.dataset.c || 0) / 100);
+      totalSi_kg += weight * (parseFloat(input.dataset.si || 0) / 100);
+      totalMn_kg += weight * (parseFloat(input.dataset.mn || 0) / 100);
+      totalCu_kg += weight * (parseFloat(input.dataset.cu || 0) / 100);
+    });
 
-        <table class="w-full text-left text-sm">
-          <thead class="bg-slate-950 text-slate-400 uppercase text-xs border-b border-slate-800">
-            <tr>
-              <th class="p-2">Материал</th>
-              <th class="p-2 w-28">Тегло (kg)</th>
-              <th class="p-2 text-right">%</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-800/80 font-medium">
-            <tr class="bg-amber-950/30">
-              <td class="p-2 text-amber-300 font-extrabold text-sm">🌊 Блато</td>
-              <td class="p-2 font-black text-amber-300 text-base" id="tableSwampWeight">350 kg</td>
-              <td class="p-2 text-right font-mono font-bold text-amber-400 text-sm" id="tableSwampPct">14%</td>
-            </tr>
-            <tr>
-              <td class="p-2 text-slate-100 font-bold text-sm">Стоманен скрап</td>
-              <td class="p-2"><input type="number" value="1000" class="mat-input custom-input w-full rounded-xl px-2 py-1.5 text-center font-black text-base bg-white text-slate-900" data-c="0.1" data-si="0.15"></td>
-              <td class="p-2 text-right font-mono font-bold text-slate-200 text-sm mat-pct">0%</td>
-            </tr>
-            <tr>
-              <td class="p-2 text-slate-100 font-bold text-sm">Собствен леяк</td>
-              <td class="p-2"><input type="number" value="950" class="mat-input custom-input w-full rounded-xl px-2 py-1.5 text-center font-black text-base bg-white text-slate-900" data-c="3.6" data-si="2.5"></td>
-              <td class="p-2 text-right font-mono font-bold text-slate-200 text-sm mat-pct">0%</td>
-            </tr>
-            <tr class="bg-orange-950/20 border-l-4 border-orange-500">
-              <td class="p-2 text-orange-200 font-black text-sm">🏷️ Нов чугун</td>
-              <td class="p-2"><input type="number" id="pigIronWeight" value="150" class="mat-input custom-input w-full rounded-xl px-2 py-1.5 text-center font-black text-base bg-orange-100 text-orange-950 border-orange-400" data-c="4.2" data-si="1.2"></td>
-              <td class="p-2 text-right font-mono font-bold text-orange-300 text-sm mat-pct">0%</td>
-            </tr>
-            <tr>
-              <td class="p-2 text-slate-100 font-bold text-sm">Навъглеродител (C)</td>
-              <td class="p-2"><input type="number" value="32" class="mat-input custom-input w-full rounded-xl px-2 py-1.5 text-center font-black text-base bg-white text-slate-900" data-c="98" data-si="0"></td>
-              <td class="p-2 text-right font-mono font-bold text-slate-200 text-sm mat-pct">0%</td>
-            </tr>
-            <tr>
-              <td class="p-2 text-slate-100 font-bold text-sm">Феросилиций (FeSi)</td>
-              <td class="p-2"><input type="number" value="18" class="mat-input custom-input w-full rounded-xl px-2 py-1.5 text-center font-black text-base bg-white text-slate-900" data-c="0" data-si="75"></td>
-              <td class="p-2 text-right font-mono font-bold text-slate-200 text-sm mat-pct">0%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    const grandTotalWeight = swampWeight + addedWeight;
+    document.getElementById('totalWeightDisplay').innerText = grandTotalWeight;
+    document.getElementById('tableSwampPct').innerText = grandTotalWeight > 0 ? ((swampWeight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
+    
+    matInputs.forEach((input, index) => {
+      const weight = parseFloat(input.value) || 0;
+      matPctDisplays[index].innerText = grandTotalWeight > 0 ? ((weight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
+    });
 
-    <!-- КОЛОНА 3: ХИМИЯ, СЪВЕТ И БУТОНИ -->
-    <section class="col-span-3 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
-      <div class="space-y-3">
-        <h2 class="text-sm font-bold uppercase text-orange-400 tracking-wider flex items-center gap-2">
-          <span class="step-badge">3</span> Анализ & Режим
-        </h2>
+    if (grandTotalWeight > 0) {
+      const finalC = (totalC_kg / grandTotalWeight) * 100;
+      const finalSi = (totalSi_kg / grandTotalWeight) * 100;
+      const finalMn = (totalMn_kg / grandTotalWeight) * 100;
+      const finalCu = (totalCu_kg / grandTotalWeight) * 100;
 
-        <!-- C -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs font-bold">
-            <span class="text-slate-200">Въглерод (C)</span>
-            <span class="font-mono text-slate-400">Цел: <span id="targetCVal">3.60%</span></span>
-          </div>
-          <div class="text-right"><strong id="valC" class="text-emerald-400 text-xl font-extrabold">0.00%</strong></div>
-          <div class="progress-track"><div id="barC" class="progress-fill bg-emerald-500" style="width: 0%;"></div></div>
-        </div>
+      valC.innerText = finalC.toFixed(2) + '%';
+      valSi.innerText = finalSi.toFixed(2) + '%';
+      valMn.innerText = finalMn.toFixed(2) + '%';
+      valCu.innerText = finalCu.toFixed(2) + '%';
 
-        <!-- Si -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs font-bold">
-            <span class="text-slate-200">Силиций (Si)</span>
-            <span class="font-mono text-slate-400">Цел: <span id="targetSiVal">2.50%</span></span>
-          </div>
-          <div class="text-right"><strong id="valSi" class="text-amber-400 text-xl font-extrabold">0.00%</strong></div>
-          <div class="progress-track"><div id="barSi" class="progress-fill bg-amber-500" style="width: 0%;"></div></div>
-        </div>
+      generateBigOperatorAdvice(grandTotalWeight, targetWeight, finalC, targetGradeData.c, finalSi, targetGradeData.si, finalMn, targetGradeData.mn, finalCu, targetGradeData.cu);
+    }
+  }
 
-        <!-- БОКС ЗА СЪВЕТ НА КАЛКУЛАТОРА -->
-        <div class="p-3 bg-slate-950 rounded-xl border border-slate-700/80 space-y-1">
-          <div class="text-xs font-black text-orange-400 uppercase tracking-wide flex items-center gap-1.5">
-            💡 Съвет от калкулатора
-          </div>
-          <p id="advisorText" class="text-xs text-slate-300 leading-snug font-medium">
-            Анализиране на шихтата...
-          </p>
-        </div>
-      </div>
+  function generateBigOperatorAdvice(totalW, targetW, c, tC, si, tSi, mn, tMn, cu, tCu) {
+    let advice = [];
+    const lW = parseFloat(labMeltWeight.value) || totalW;
+    const lC = parseFloat(labC.value);
+    const lSi = parseFloat(labSi.value);
+    const lMn = parseFloat(labMn.value);
+    const lCu = parseFloat(labCu.value);
 
-      <!-- БУТОНИ -->
-      <div class="space-y-2 pt-2 border-t border-slate-800">
-        <button id="calcBtn" class="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-slate-950 font-black py-3 px-3 rounded-xl text-sm uppercase tracking-wider transition shadow-lg shadow-orange-500/20">
-          🧮 ИЗЧИСЛИ
-        </button>
-        <button id="optimizeBtn" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 text-orange-400 font-bold py-2.5 px-3 rounded-xl border border-orange-500/30 text-xs transition">
-          🎯 Минимизирай нов чугун
-        </button>
-      </div>
-    </section>
+    // Проверка за въведени данни от Спектрометър
+    if (!isNaN(lC) || !isNaN(lSi) || !isNaN(lMn) || !isNaN(lCu)) {
+      advice.push(`<span style="color: #60a5fa; font-size: 15px;">🧪 КОРЕКЦИЯ ПО СПЕКТРОМЕТЪР:</span>`);
+      if (!isNaN(lC) && lC < tC) advice.push(`• Добави <span style="color: #34d399; font-size: 16px;">${((((tC - lC) / 100) * lW) / 0.98).toFixed(1)} kg</span> Науглеродител`);
+      if (!isNaN(lSi) && lSi < tSi) advice.push(`• Добави <span style="color: #fbbf24; font-size: 16px;">${((((tSi - lSi) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeSi75`);
+      if (!isNaN(lMn) && lMn < tMn) advice.push(`• Добави <span style="color: #22d3ee; font-size: 16px;">${((((tMn - lMn) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeMn75`);
+      if (!isNaN(lCu) && lCu < tCu) advice.push(`• Добави <span style="color: #fb7185; font-size: 16px;">${((((tCu - lCu) / 100) * lW) / 0.99).toFixed(1)} kg</span> Мед (Cu)`);
+    } else {
+      // Стандартни изчисления по шихта
+      const diffW = totalW - targetW;
+      if (Math.abs(diffW) > 5) {
+        if (diffW > 0) advice.push(`⚠️ <span style="color: #f87171;">Превишено тегло с ${diffW.toFixed(0)} kg!</span>`);
+        else advice.push(`⚖️ <span style="color: #fbbf24;">Не достигат ${Math.abs(diffW).toFixed(0)} kg до целта.</span>`);
+      }
 
-  </main>
+      if (c < tC - 0.05) advice.push(`• Нисък C: Увеличете Науглеродителя с <span style="color: #34d399;">${(((tC - c)/100)*totalW/0.98).toFixed(1)} kg</span>`);
+      if (si < tSi - 0.05) advice.push(`• Нисък Si: Увеличете FeSi с <span style="color: #fbbf24;">${(((tSi - si)/100)*totalW/0.75).toFixed(1)} kg</span>`);
+      if (mn < tMn - 0.03) advice.push(`• Нисък Mn: Увеличете FeMn с <span style="color: #22d3ee;">${(((tMn - mn)/100)*totalW/0.75).toFixed(1)} kg</span>`);
+      if (cu < tCu - 0.03) advice.push(`• Нисък Cu: Увеличете Cu с <span style="color: #fb7185;">${(((tCu - cu)/100)*totalW/0.99).toFixed(1)} kg</span>`);
+    }
 
-  <script src="script.js"></script>
-  <!-- FOOTER -->
-  <footer class="mt-auto border-t border-slate-800/80 pt-2 pb-1 flex justify-between items-center text-[11px] text-slate-400 font-medium">
-    <!-- Лого & Фирма -->
-    <div class="flex items-center gap-2">
-      <span class="font-bold text-slate-200">FoundryIQ Systems</span>
-      <span class="text-slate-600">|</span>
-      <span>Софтуер за управление на леярски процеси</span>
-    </div>
+    if (advice.length === 0) {
+      operatorAdvice.innerHTML = `<span style="color: #34d399; font-size: 16px;">✅ ГОТОВО ЗА ТЕНЕЦ!</span><br>Всички химически показатели съвпадат.`;
+    } else {
+      operatorAdvice.innerHTML = advice.join('<br>');
+    }
+  }
 
-    <!-- Разработчици -->
-    <div class="flex items-center gap-1.5 font-mono">
-      <span>Developed by</span>
-      <a href="#" class="text-orange-400 font-bold hover:underline hover:text-orange-300 transition">DevTeam</a>
-      <span class="text-slate-600">v1.2</span>
-    </div>
-  </footer>
-</body>
-</html>
+  targetWeightInput.addEventListener('input', () => { autoSetPigIron(); calculate(); });
+  swampWeightInput.addEventListener('input', calculate);
+  targetGradeSelect.addEventListener('change', calculate);
+  swampGradeSelect.addEventListener('change', calculate);
+  matInputs.forEach(i => i.addEventListener('input', calculate));
+  [labMeltWeight, labC, labSi, labMn, labCu].forEach(i => i.addEventListener('input', calculate));
+
+  autoSetPigIron();
+  calculate();
+});
