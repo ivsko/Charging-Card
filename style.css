@@ -9,7 +9,7 @@
 }
 
 body {
-  font-size: 16px;
+  
   background-color: #0b1120;
   color: #f8fafc;
   min-height: 100vh;
@@ -90,7 +90,7 @@ body {
 }
 
 .panel h2 {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 800;
   color: #f97316;
   display: flex;
@@ -134,7 +134,7 @@ body {
   color: #ffffff;
   padding: 10px 12px;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   outline: none;
   width: 100%;
@@ -155,7 +155,7 @@ body {
   background-color: #1e293b;
   border: 1px solid #334155;
   color: #94a3b8;
-  padding: 25px;
+  padding: 15px;
   border-radius: 6px;
   font-size: 20px;
   font-weight: 700;
@@ -188,7 +188,7 @@ body {
 
 .swamp-card h3 {
   color: #fbbf24;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   margin: 0;
 }
@@ -214,7 +214,7 @@ body {
 .charging-table td {
   padding: 6px 8px;
   border-bottom: 1px solid #1e293b;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #e2e8f0;
   vertical-align: middle;
@@ -232,7 +232,7 @@ body {
   padding: 4px 6px;
   width: 75px;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   margin: 0 auto;
   display: block;
@@ -250,7 +250,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   color: #94a3b8;
   border-top: 1px solid #1e293b;
@@ -260,13 +260,13 @@ body {
 .weight-num {
   color: #ffffff;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .scale-status {
   padding: 10px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   text-align: center;
 }
@@ -301,7 +301,7 @@ body {
   border: none;
   padding: 12px;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
   cursor: pointer;
   transition: background 0.2s;
