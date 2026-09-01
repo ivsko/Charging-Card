@@ -112,15 +112,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const diff = totalW - targetW;
     scaleStatus.className = 'scale-status';
     
-    if (Math.abs(diff) <= 500 && totalW > 0) {
+
+    
+    // Изчисляваме 5% толеранс спрямо актуалното целево тегло на пещта
+    const tolerance = targetW * 0.05;
+
+    scaleStatus.className = 'scale-status';
+    
+    if (Math.abs(diff) <= tolerance && totalW > 0) {
       scaleStatus.classList.add('in-tolerance');
       scaleStatus.textContent = `⚖️ КАНТАР: Перфектно тегло!`;
-    } else if (totalW < targetW - 500) {
+    } else if (totalW < targetW - tolerance) {
       scaleStatus.classList.add('under-weight');
-      scaleStatus.textContent = `⚖️ КАНТАР: Недостатъчно тегло! Добавете още ${targetW - totalW} kg.`;
-    } else if (totalW > targetW + 500) {
+      scaleStatus.textContent = `⚖️ КАНТАР: Недостатъчно тегло! Добавете още ${Math.round(targetW - totalW)} kg.`;
+    } else if (totalW > targetW + tolerance) {
       scaleStatus.classList.add('over-weight');
-      scaleStatus.textContent = `⚖️ КАНТАР: Превишено тегло! Намалете с ${totalW - targetW} kg.`;
+      scaleStatus.textContent = `⚖️ КАНТАР: Превишено тегло! Намалете с ${Math.round(totalW - targetW)} kg.`;
     } else {
       scaleStatus.classList.add('under-weight');
       scaleStatus.textContent = `⚖️ КАНТАР: Заредете материали...`;
