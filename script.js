@@ -251,11 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (si < targets.Si - 0.10) {
       let neededSi = ((targets.Si - si) * 100).toFixed(1);
       adviceText = `⚠️ Силицият е нисък! Подсказка: Добавете около ${Math.round(neededSi * 1.5)} kg Феросилиций (FeSi75).`;
-    } } else if (mn < targets.Mn - 0.05) {
+    } else if (mn < targets.Mn - 0.05) {
       let neededMn = ((targets.Mn - mn) * 100).toFixed(1);
       adviceText = `⚠️ Манганът е нисък! Подсказка: Добавете около ${Math.round(neededMn * 1.8)} kg Фероманган (FeMn75).`;
     } else {
-      adviceText = '✅ Химичният състав Е В НОРМА! Шихтата е готова за разтопяване.';
+      adviceText = '✅ Химичният състав е в норма! Шихтата е готова за разтопяване.';
     }
 
     operatorAdvice.textContent = adviceText;
