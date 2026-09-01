@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     valMn.textContent = "0.00%";
     valCu.textContent = "0.00%";
     
-    operatorAdvice.textContent = 'Нагласете теглата и натиснете бутона "Изчисли Химия".';
+    operatorAdvice.textContent = 'Нагласете теглата и натиснете бутона "Изчисли Химичен Състав".';
   });
 
   // 5. ИЗЧИСЛЯВАНЕ НА ХИМИЯТА (САМО ПРИ КЛИК НА БУТОНА)
@@ -251,10 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (si < targets.Si - 0.10) {
       let neededSi = ((targets.Si - si) * 100).toFixed(1);
       adviceText = `⚠️ Силицият е нисък! Подсказка: Добавете около ${Math.round(neededSi * 1.5)} kg Феросилиций (FeSi75).`;
-    } else if (mn < targets.Mn - 0.05) {
-      adviceText = `⚠️ Манганът е под целта! Подсказка: Увеличете феромангана (FeMn75).`;
+    } } else if (mn < targets.Mn - 0.05) {
+      let neededMn = ((targets.Mn - mn) * 100).toFixed(1);
+      adviceText = `⚠️ Манганът е нисък! Подсказка: Добавете около ${Math.round(neededMn * 1.8)} kg Фероманган (FeMn75).`;
     } else {
-      adviceText = '✅ ХИМИЯТА Е В НОРМА! Шихтата е готова за разтопяване.';
+      adviceText = '✅ Химичният състав Е В НОРМА! Шихтата е готова за разтопяване.';
     }
 
     operatorAdvice.textContent = adviceText;
