@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let adviceText = '';
     if (c < targets.C - 0.08) {
       let neededC = ((targets.C - c) * 100).toFixed(1);
-      adviceText = `⚠️ Въглеродът е нисък! Подсказка: Добавете около ${Math.round(neededC * 1.2)} kg Науглеродител (C).`;
+      adviceText = `⚠️ Въглеродът е нисък! Подсказка: Добавете около ${Math.round(neededC * 1.2)} kg Навъглеродител (C).`;
     } else if (si < targets.Si - 0.10) {
       let neededSi = ((targets.Si - si) * 100).toFixed(1);
       adviceText = `⚠️ Силицият е нисък! Подсказка: Добавете около ${Math.round(neededSi * 1.5)} kg Феросилиций (FeSi75).`;
