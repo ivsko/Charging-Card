@@ -16,7 +16,7 @@
       
       <h1 class="logo-title">
         FoundryIQ 
-        <span class="badge-orange">ВЕРСИЯ 2.0</span>
+        <span class="badge-orange">ВЕРСИЯ 1.0</span>
       </h1>
     </div>
   </header>
@@ -45,9 +45,12 @@
           <select id="targetGrade" class="input-field">
             
             <option value="gjl200">EN-GJL-200</option>
+            <option value="gjl250">EN-GJL-250</option>
             <option value="gjl300">EN-GJL-300</option>
             <option value="gjs400">EN-GJS-400</option>
             <option value="gjs500">EN-GJS-500</option>
+            <option value="gjs600">EN-GJS-600</option>
+            <option value="gjs700">EN-GJS-700</option>
           </select>
         </div>
 
@@ -59,9 +62,12 @@
             <select id="swampGrade" class="input-field">
               
               <option value="gjl200">Блато от GJL-200</option>
+              <option value="gjl250">Блато от GJL-250</option>
               <option value="gjl300">Блато от GJL-300</option>
               <option value="gjs400">Блато от GJS-400-15</option>
               <option value="gjs500">Блато от GJS-500-7</option>
+              <option value="gjs600">Блато от GJS-600-3</option>
+              <option value="gjs700">Блато от GJS-700-2</option>
             </select>
           </div>
 
@@ -99,12 +105,12 @@
               <td class="mat-pct"><span id="pctScrap">0.0%</span></td>
             </tr>
             <tr>
-              <td>Възврат - сферографитен чугун</td>
+              <td>Собствен възврат - сферографитен чугун</td>
               <td><input type="number" id="returnGjsWeight" class="input-field" value="0"></td>
               <td class="mat-pct"><span id="pctReturnGjs">0.0%</span></td>
             </tr>
             <tr>
-              <td>Възврат - сив чугун</td>
+              <td>Собствен възврат - сив чугун</td>
               <td><input type="number" id="returnGjlWeight" class="input-field" value="0"></td>
               <td class="mat-pct"><span id="pctReturnGjl">0.0%</span></td>
             </tr>
@@ -148,7 +154,7 @@
         </div>
 
         <div class="actions-bar">
-          <button type="button" id="calculateBtn" class="btn-primary">⚡ ИЗЧИСЛИ ХИМИЯ</button>
+          <button type="button" id="calculateBtn" class="btn-primary">⚡ ИЗЧИСЛИ ХИМИЧЕН СЪСТАВ</button>
           <button type="button" id="clearAllBtn" class="btn-secondary">🗑️</button>
         </div>
       </div>
@@ -158,7 +164,7 @@
     <!-- КОЛОНА 3: ИЗЧИСЛЕНА ХИМИЯ -->
     <div class="panel">
       <div>
-        <h2><span class="step-num">3</span> ИЗЧИСЛЕНА ХИМИЯ</h2>
+        <h2><span class="step-num">3</span> ИЗЧИСЛЕН ХИМИЧЕН СЪСТАВ</h2>
 
         <div class="chem-grid" style="margin-top: 14px;">
           <div class="chem-card">
@@ -185,7 +191,7 @@
 
       <div class="advice-box" style="margin-top: 14px;">
         <div class="advice-title">📢 ИНСТРУКЦИЯ ЗА ОПЕРАТОРА</div>
-        <div id="operatorAdvice">Нагласете теглата до получаване на зелен кантар и натиснете "Изчисли Химия".</div>
+        <div id="operatorAdvice">Нагласете теглата до получаване на зелен кантар и натиснете "Изчисли Химичен Състав".</div>
       </div>
     </div>
 
