@@ -1,143 +1,262 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const gradesDB = {
-    gjs500: { name: 'EN-GJS-500-7', c: 3.60, si: 2.50, mn: 0.40, cu: 0.50 },
-    gjl200: { name: 'EN-GJL-200',     c: 3.30, si: 2.10, mn: 0.60, cu: 0.20 },
-    gjs400: { name: 'EN-GJS-400-15',  c: 3.70, si: 2.60, mn: 0.20, cu: 0.00 }
-  };
-
   const furnaceBtns = document.querySelectorAll('.furnace-btn');
-  const targetWeightInput = document.getElementById('targetWeight');
+  const targetMeltWeight = document.getElementById('targetMeltWeight');
+  const targetWeightDisplay = document.getElementById('targetWeightDisplay');
   const targetGradeSelect = document.getElementById('targetGrade');
-  const swampGradeSelect = document.getElementById('swampGrade');
+  
   const swampWeightInput = document.getElementById('swampWeight');
+  const tableSwampText = document.getElementById('tableSwampText');
+  
+  const totalWeightDisplay = document.getElementById('totalWeightDisplay');
+  const scaleStatus = document.getElementById('scaleStatus');
+  const calculateBtn = document.getElementById('calculateBtn');
+  const clearAllBtn = document.getElementById('clearAllBtn');
+
+  const scrapInput = document.getElementById('scrapWeightInput');
+  const returnGjsInput = document.getElementById('returnGjsWeight');
+  const returnGjlInput = document.getElementById('returnGjlWeight');
   const pigIronInput = document.getElementById('pigIronWeight');
-  const matInputs = document.querySelectorAll('.mat-input');
-  const matPctDisplays = document.querySelectorAll('.mat-pct');
+  const cInput = document.getElementById('cWeightInput');
+  const fesiInput = document.getElementById('fesiWeightInput');
+  const femnInput = document.getElementById('femnWeightInput');
+  const cuInput = document.getElementById('cuWeightInput');
 
   const valC = document.getElementById('valC');
   const valSi = document.getElementById('valSi');
   const valMn = document.getElementById('valMn');
   const valCu = document.getElementById('valCu');
+
+  const targetC = document.getElementById('targetC');
+  const targetSi = document.getElementById('targetSi');
+  const targetMn = document.getElementById('targetMn');
+  const targetCu = document.getElementById('targetCu');
+
   const operatorAdvice = document.getElementById('operatorAdvice');
 
-  const labMeltWeight = document.getElementById('labMeltWeight');
-  const labC = document.getElementById('labC');
-  const labSi = document.getElementById('labSi');
-  const labMn = document.getElementById('labMn');
-  const labCu = document.getElementById('labCu');
+  const pctSwamp = document.getElementById('pctSwamp');
+  const pctScrap = document.getElementById('pctScrap');
+  const pctReturnGjs = document.getElementById('pctReturnGjs');
+  const pctReturnGjl = document.getElementById('pctReturnGjl');
+  const pctPigIron = document.getElementById('pctPigIron');
+  const pctC = document.getElementById('pctC');
+  const pctFeSi = document.getElementById('pctFeSi');
+  const pctFeMn = document.getElementById('pctFeMn');
+  const pctCu = document.getElementById('pctCu');
 
+  // Масив с всички полета за въвеждане
+  const allInputs = [
+    swampWeightInput, scrapInput, returnGjsInput, returnGjlInput, 
+    pigIronInput, cInput, fesiInput, femnInput, cuInput
+  ];
+
+  // 1. ИЗБОР НА ПЕЩ
   furnaceBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       furnaceBtns.forEach(b => b.classList.remove('active-furnace'));
       btn.classList.add('active-furnace');
-      targetWeightInput.value = btn.dataset.capacity;
-      autoSetPigIron();
-      calculate();
+      const capacity = btn.getAttribute('data-capacity');
+      targetMeltWeight.value = capacity;
+      targetWeightDisplay.textContent = capacity;
+      updateScaleDynamic(); // Обновява кантара при смяна на пещта
     });
   });
 
-  function autoSetPigIron() {
-    const targetW = parseFloat(targetWeightInput.value) || 2500;
-    pigIronInput.value = Math.round(targetW * 0.03);
+  // 2. СМЯНА НА МАРКА
+  targetGradeSelect.addEventListener('change', () => {
+    updateTargetsDisplay();
+  });
+
+  function updateTargetsDisplay() {
+    const grade = targetGradeSelect.value;
+    const targets = TARGET_GRADES[grade] || TARGET_GRADES['gjs500'];
+    
+    targetC.textContent = `Цел: ${targets.C.toFixed(2)}%`;
+    targetSi.textContent = `Цел: ${targets.Si.toFixed(2)}%`;
+    targetMn.textContent = `Цел: ${targets.Mn.toFixed(2)}%`;
+    targetCu.textContent = `Цел: ${targets.Cu.toFixed(2)}%`;
   }
 
-  function calculate() {
-    const targetWeight = parseFloat(targetWeightInput.value) || 1;
-    const swampWeight = parseFloat(swampWeightInput.value) || 0;
+  // 3. ДИНАМИЧЕН КАНТАР (Работи в реално време докато се въвежда)
+  function updateScaleDynamic() {
+    const targetW = parseFloat(targetMeltWeight.value) || 10000;
     
-    const swampData = gradesDB[swampGradeSelect.value] || gradesDB.gjs500;
-    const targetGradeData = gradesDB[targetGradeSelect.value] || gradesDB.gjs500;
-    
-    document.getElementById('targetCVal').innerText = targetGradeData.c.toFixed(2) + '%';
-    document.getElementById('targetSiVal').innerText = targetGradeData.si.toFixed(2) + '%';
-    document.getElementById('targetMnVal').innerText = targetGradeData.mn.toFixed(2) + '%';
-    document.getElementById('targetCuVal').innerText = targetGradeData.cu.toFixed(2) + '%';
-    
-    document.getElementById('tableSwampWeight').innerText = swampWeight + ' kg';
-    document.getElementById('targetWeightDisplay').innerText = targetWeight;
+    const swampW = parseFloat(swampWeightInput.value) || 0;
+    const scrapW = parseFloat(scrapInput.value) || 0;
+    const retGjsW = parseFloat(returnGjsInput.value) || 0;
+    const retGjlW = parseFloat(returnGjlInput.value) || 0;
+    const pigW = parseFloat(pigIronInput.value) || 0;
+    const cW = parseFloat(cInput.value) || 0;
+    const fesiW = parseFloat(fesiInput.value) || 0;
+    const femnW = parseFloat(femnWeightInput.value) || 0;
+    const cuW = parseFloat(cuInput.value) || 0;
 
-    let addedWeight = 0;
-    let totalC_kg = swampWeight * (swampData.c / 100);
-    let totalSi_kg = swampWeight * (swampData.si / 100);
-    let totalMn_kg = swampWeight * (swampData.mn / 100);
-    let totalCu_kg = swampWeight * (swampData.cu / 100);
+    const totalW = swampW + scrapW + retGjsW + retGjlW + pigW + cW + fesiW + femnW + cuW;
+    totalWeightDisplay.textContent = totalW;
+    tableSwampText.textContent = swampW; // Обновява текста на блатото в таблицата
 
-    matInputs.forEach(input => {
-      const weight = parseFloat(input.value) || 0;
-      addedWeight += weight;
-      totalC_kg += weight * (parseFloat(input.dataset.c || 0) / 100);
-      totalSi_kg += weight * (parseFloat(input.dataset.si || 0) / 100);
-      totalMn_kg += weight * (parseFloat(input.dataset.mn || 0) / 100);
-      totalCu_kg += weight * (parseFloat(input.dataset.cu || 0) / 100);
-    });
-
-    const grandTotalWeight = swampWeight + addedWeight;
-    document.getElementById('totalWeightDisplay').innerText = grandTotalWeight;
-    document.getElementById('tableSwampPct').innerText = grandTotalWeight > 0 ? ((swampWeight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
-    
-    matInputs.forEach((input, index) => {
-      const weight = parseFloat(input.value) || 0;
-      matPctDisplays[index].innerText = grandTotalWeight > 0 ? ((weight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
-    });
-
-    if (grandTotalWeight > 0) {
-      const finalC = (totalC_kg / grandTotalWeight) * 100;
-      const finalSi = (totalSi_kg / grandTotalWeight) * 100;
-      const finalMn = (totalMn_kg / grandTotalWeight) * 100;
-      const finalCu = (totalCu_kg / grandTotalWeight) * 100;
-
-      valC.innerText = finalC.toFixed(2) + '%';
-      valSi.innerText = finalSi.toFixed(2) + '%';
-      valMn.innerText = finalMn.toFixed(2) + '%';
-      valCu.innerText = finalCu.toFixed(2) + '%';
-
-      generateBigOperatorAdvice(grandTotalWeight, targetWeight, finalC, targetGradeData.c, finalSi, targetGradeData.si, finalMn, targetGradeData.mn, finalCu, targetGradeData.cu);
+    function getPct(val) {
+      return totalW > 0 ? ((val / totalW) * 100).toFixed(1) + '%' : '0.0%';
     }
-  }
 
-  function generateBigOperatorAdvice(totalW, targetW, c, tC, si, tSi, mn, tMn, cu, tCu) {
-    let advice = [];
-    const lW = parseFloat(labMeltWeight.value) || totalW;
-    const lC = parseFloat(labC.value);
-    const lSi = parseFloat(labSi.value);
-    const lMn = parseFloat(labMn.value);
-    const lCu = parseFloat(labCu.value);
+    pctSwamp.textContent = getPct(swampW);
+    pctScrap.textContent = getPct(scrapW);
+    pctReturnGjs.textContent = getPct(retGjsW);
+    pctReturnGjl.textContent = getPct(retGjlW);
+    pctPigIron.textContent = getPct(pigW);
+    pctC.textContent = getPct(cW);
+    pctFeSi.textContent = getPct(fesiW);
+    pctFeMn.textContent = getPct(femnW);
+    pctCu.textContent = getPct(cuW);
 
-    // Проверка за въведени данни от Спектрометър
-    if (!isNaN(lC) || !isNaN(lSi) || !isNaN(lMn) || !isNaN(lCu)) {
-      advice.push(`<span style="color: #60a5fa; font-size: 15px;">🧪 КОРЕКЦИЯ ПО СПЕКТРОМЕТЪР:</span>`);
-      if (!isNaN(lC) && lC < tC) advice.push(`• Добави <span style="color: #34d399; font-size: 16px;">${((((tC - lC) / 100) * lW) / 0.98).toFixed(1)} kg</span> Науглеродител`);
-      if (!isNaN(lSi) && lSi < tSi) advice.push(`• Добави <span style="color: #fbbf24; font-size: 16px;">${((((tSi - lSi) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeSi75`);
-      if (!isNaN(lMn) && lMn < tMn) advice.push(`• Добави <span style="color: #22d3ee; font-size: 16px;">${((((tMn - lMn) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeMn75`);
-      if (!isNaN(lCu) && lCu < tCu) advice.push(`• Добави <span style="color: #fb7185; font-size: 16px;">${((((tCu - lCu) / 100) * lW) / 0.99).toFixed(1)} kg</span> Мед (Cu)`);
+    const diff = totalW - targetW;
+    scaleStatus.className = 'scale-status';
+    
+    if (Math.abs(diff) <= 500 && totalW > 0) {
+      scaleStatus.classList.add('in-tolerance');
+      scaleStatus.textContent = `⚖️ КАНТАР: Перфектно тегло!`;
+    } else if (totalW < targetW - 500) {
+      scaleStatus.classList.add('under-weight');
+      scaleStatus.textContent = `⚖️ КАНТАР: Недостатъчно тегло! Добавете още ${targetW - totalW} kg.`;
+    } else if (totalW > targetW + 500) {
+      scaleStatus.classList.add('over-weight');
+      scaleStatus.textContent = `⚖️ КАНТАР: Превишено тегло! Намалете с ${totalW - targetW} kg.`;
     } else {
-      // Стандартни изчисления по шихта
-      const diffW = totalW - targetW;
-      if (Math.abs(diffW) > 5) {
-        if (diffW > 0) advice.push(`⚠️ <span style="color: #f87171;">Превишено тегло с ${diffW.toFixed(0)} kg!</span>`);
-        else advice.push(`⚖️ <span style="color: #fbbf24;">Не достигат ${Math.abs(diffW).toFixed(0)} kg до целта.</span>`);
-      }
-
-      if (c < tC - 0.05) advice.push(`• Нисък C: Увеличете Науглеродителя с <span style="color: #34d399;">${(((tC - c)/100)*totalW/0.98).toFixed(1)} kg</span>`);
-      if (si < tSi - 0.05) advice.push(`• Нисък Si: Увеличете FeSi с <span style="color: #fbbf24;">${(((tSi - si)/100)*totalW/0.75).toFixed(1)} kg</span>`);
-      if (mn < tMn - 0.03) advice.push(`• Нисък Mn: Увеличете FeMn с <span style="color: #22d3ee;">${(((tMn - mn)/100)*totalW/0.75).toFixed(1)} kg</span>`);
-      if (cu < tCu - 0.03) advice.push(`• Нисък Cu: Увеличете Cu с <span style="color: #fb7185;">${(((tCu - cu)/100)*totalW/0.99).toFixed(1)} kg</span>`);
-    }
-
-    if (advice.length === 0) {
-      operatorAdvice.innerHTML = `<span style="color: #34d399; font-size: 16px;">✅ ГОТОВО ЗА ТЕНЕЦ!</span><br>Всички химически показатели съвпадат.`;
-    } else {
-      operatorAdvice.innerHTML = advice.join('<br>');
+      scaleStatus.classList.add('under-weight');
+      scaleStatus.textContent = `⚖️ КАНТАР: Заредете материали...`;
     }
   }
 
-  targetWeightInput.addEventListener('input', () => { autoSetPigIron(); calculate(); });
-  swampWeightInput.addEventListener('input', calculate);
-  targetGradeSelect.addEventListener('change', calculate);
-  swampGradeSelect.addEventListener('change', calculate);
-  matInputs.forEach(i => i.addEventListener('input', calculate));
-  [labMeltWeight, labC, labSi, labMn, labCu].forEach(i => i.addEventListener('input', calculate));
+  // Прикачаме динамичния кантар към всяко поле за въвеждане
+  allInputs.forEach(input => {
+    input.addEventListener('input', updateScaleDynamic);
+  });
 
-  autoSetPigIron();
-  calculate();
+  // 4. БУТОН ЗА ИЗЧИСТВАНЕ
+  clearAllBtn.addEventListener('click', () => {
+    scrapInput.value = 0;
+    returnGjsInput.value = 0;
+    returnGjlInput.value = 0;
+    pigIronInput.value = 0;
+    cInput.value = 0;
+    fesiInput.value = 0;
+    femnInput.value = 0;
+    cuInput.value = 0;
+    
+    updateScaleDynamic(); // Извикваме го, за да занули кантара
+    
+    valC.textContent = "0.00%";
+    valSi.textContent = "0.00%";
+    valMn.textContent = "0.00%";
+    valCu.textContent = "0.00%";
+    
+    operatorAdvice.textContent = 'Нагласете теглата и натиснете бутона "Изчисли Химия".';
+  });
+
+  // 5. ИЗЧИСЛЯВАНЕ НА ХИМИЯТА (САМО ПРИ КЛИК НА БУТОНА)
+  calculateBtn.addEventListener('click', () => {
+    const totalW = parseFloat(totalWeightDisplay.textContent) || 0;
+
+    if (totalW === 0) {
+      valC.textContent = "0.00%";
+      valSi.textContent = "0.00%";
+      valMn.textContent = "0.00%";
+      valCu.textContent = "0.00%";
+      operatorAdvice.textContent = 'Моля, въведете тегла и натиснете бутона.';
+      return;
+    }
+
+    const swampW = parseFloat(swampWeightInput.value) || 0;
+    const scrapW = parseFloat(scrapInput.value) || 0;
+    const retGjsW = parseFloat(returnGjsInput.value) || 0;
+    const retGjlW = parseFloat(returnGjlInput.value) || 0;
+    const pigW = parseFloat(pigIronInput.value) || 0;
+    const cW = parseFloat(cInput.value) || 0;
+    const fesiW = parseFloat(fesiInput.value) || 0;
+    const femnW = parseFloat(femnWeightInput.value) || 0;
+    const cuW = parseFloat(cuInput.value) || 0;
+
+    // 🔬 РЕАЛЕН МАСОВ БАЛАНС (КГ ЕЛЕМЕНТ / ОБЩО КГ В ПЕЩТА)
+    let totalCKg = (swampW * MATERIALS_DATA.swamp.C / 100) + 
+                   (scrapW * MATERIALS_DATA.scrap.C / 100) + 
+                   (retGjsW * MATERIALS_DATA.returnGjs.C / 100) + 
+                   (retGjlW * MATERIALS_DATA.returnGjl.C / 100) + 
+                   (pigW * MATERIALS_DATA.pigIron.C / 100) + 
+                   (cW * MATERIALS_DATA.carbonizer.yield); 
+
+    let totalSiKg = (swampW * MATERIALS_DATA.swamp.Si / 100) + 
+                    (scrapW * MATERIALS_DATA.scrap.Si / 100) + 
+                    (retGjsW * MATERIALS_DATA.returnGjs.Si / 100) + 
+                    (retGjlW * MATERIALS_DATA.returnGjl.Si / 100) + 
+                    (pigW * MATERIALS_DATA.pigIron.Si / 100) + 
+                    (fesiW * 0.75 * MATERIALS_DATA.fesi.yield); 
+
+    let totalMnKg = (swampW * MATERIALS_DATA.swamp.Mn / 100) + 
+                    (scrapW * MATERIALS_DATA.scrap.Mn / 100) + 
+                    (retGjsW * MATERIALS_DATA.returnGjs.Mn / 100) + 
+                    (retGjlW * MATERIALS_DATA.returnGjl.Mn / 100) + 
+                    (pigW * MATERIALS_DATA.pigIron.Mn / 100) + 
+                    (femnW * 0.75 * MATERIALS_DATA.femn.yield); 
+
+    let totalCuKg = (swampW * MATERIALS_DATA.swamp.Cu / 100) + 
+                    (scrapW * MATERIALS_DATA.scrap.Cu / 100) + 
+                    (retGjsW * MATERIALS_DATA.returnGjs.Cu / 100) + 
+                    (retGjlW * MATERIALS_DATA.returnGjl.Cu / 100) + 
+                    (pigW * MATERIALS_DATA.pigIron.Cu / 100) + 
+                    (cuW * MATERIALS_DATA.copper.yield);
+
+    let calcC = (totalCKg / totalW) * 100;
+    let calcSi = (totalSiKg / totalW) * 100;
+    let calcMn = (totalMnKg / totalW) * 100;
+    let calcCu = (totalCuKg / totalW) * 100;
+
+    valC.textContent = calcC.toFixed(2) + '%';
+    valSi.textContent = calcSi.toFixed(2) + '%';
+    valMn.textContent = calcMn.toFixed(2) + '%';
+    valCu.textContent = calcCu.toFixed(2) + '%';
+
+    const currentGrade = targetGradeSelect.value;
+    const targets = TARGET_GRADES[currentGrade];
+
+    updateChemCardStyle(valC, calcC, targets.C, 0.08);
+    updateChemCardStyle(valSi, calcSi, targets.Si, 0.10);
+    updateChemCardStyle(valMn, calcMn, targets.Mn, 0.05);
+    updateChemCardStyle(valCu, calcCu, targets.Cu, 0.05);
+
+    generateAdvice(calcC, calcSi, calcMn, targets, totalW);
+  });
+
+  function updateChemCardStyle(element, current, target, tolerance) {
+    element.className = 'chem-val';
+    if (current === 0) return;
+
+    const diff = current - target;
+    if (Math.abs(diff) <= tolerance) {
+      element.classList.add('val-green');
+    } else if (diff > tolerance) {
+      element.classList.add('val-red');
+    } else {
+      element.classList.add('val-amber');
+    }
+  }
+
+  function generateAdvice(c, si, mn, targets, totalW) {
+    let adviceText = '';
+    if (c < targets.C - 0.08) {
+      let neededC = ((targets.C - c) * 100).toFixed(1);
+      adviceText = `⚠️ Въглеродът е нисък! Подсказка: Добавете около ${Math.round(neededC * 1.2)} kg Науглеродител (C).`;
+    } else if (si < targets.Si - 0.10) {
+      let neededSi = ((targets.Si - si) * 100).toFixed(1);
+      adviceText = `⚠️ Силицият е нисък! Подсказка: Добавете около ${Math.round(neededSi * 1.5)} kg Феросилиций (FeSi75).`;
+    } else if (mn < targets.Mn - 0.05) {
+      adviceText = `⚠️ Манганът е под целта! Подсказка: Увеличете феромангана (FeMn75).`;
+    } else {
+      adviceText = '✅ ХИМИЯТА Е В НОРМА! Шихтата е готова за разтопяване.';
+    }
+
+    operatorAdvice.textContent = adviceText;
+  }
+
+  // Инициализация при старт
+  updateTargetsDisplay();
+  updateScaleDynamic(); 
 });
