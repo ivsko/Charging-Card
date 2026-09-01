@@ -1,143 +1,204 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const gradesDB = {
-    gjs500: { name: 'EN-GJS-500-7', c: 3.60, si: 2.50, mn: 0.40, cu: 0.50 },
-    gjl200: { name: 'EN-GJL-200',     c: 3.30, si: 2.10, mn: 0.60, cu: 0.20 },
-    gjs400: { name: 'EN-GJS-400-15',  c: 3.70, si: 2.60, mn: 0.20, cu: 0.00 }
-  };
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoundryIQ — Шихтова Карта</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-  const furnaceBtns = document.querySelectorAll('.furnace-btn');
-  const targetWeightInput = document.getElementById('targetWeight');
-  const targetGradeSelect = document.getElementById('targetGrade');
-  const swampGradeSelect = document.getElementById('swampGrade');
-  const swampWeightInput = document.getElementById('swampWeight');
-  const pigIronInput = document.getElementById('pigIronWeight');
-  const matInputs = document.querySelectorAll('.mat-input');
-  const matPctDisplays = document.querySelectorAll('.mat-pct');
+  <!-- HEADER -->
+  <header>
+    <div class="logo-box">
+      <span class="fire-icon">🔥</span>
+      <h1 class="header-title">FoundryIQ <span class="badge">OPERATOR CONTROL</span></h1>
+    </div>
+  </header>
 
-  const valC = document.getElementById('valC');
-  const valSi = document.getElementById('valSi');
-  const valMn = document.getElementById('valMn');
-  const valCu = document.getElementById('valCu');
-  const operatorAdvice = document.getElementById('operatorAdvice');
+  <!-- MAIN -->
+  <main>
+    <!-- КОЛОНА 1: ПЕЩ & БЛАТО -->
+    <section class="col-1">
+      <div class="card">
+        <div>
+          <div class="card-title"><span class="step-num">1</span> Пещ & Блато</div>
 
-  const labMeltWeight = document.getElementById('labMeltWeight');
-  const labC = document.getElementById('labC');
-  const labSi = document.getElementById('labSi');
-  const labMn = document.getElementById('labMn');
-  const labCu = document.getElementById('labCu');
+          <div class="form-group">
+            <label>Избор на пещ</label>
+            <div class="furnace-grid">
+              <button type="button" class="furnace-btn" data-capacity="10000">10 t</button>
+              <button type="button" class="furnace-btn" data-capacity="8000">8 t</button>
+              <button type="button" class="furnace-btn active-furnace" data-capacity="2500">2.5 t</button>
+            </div>
+          </div>
 
-  furnaceBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      furnaceBtns.forEach(b => b.classList.remove('active-furnace'));
-      btn.classList.add('active-furnace');
-      targetWeightInput.value = btn.dataset.capacity;
-      autoSetPigIron();
-      calculate();
-    });
-  });
+          <div class="form-group">
+            <label>Целева марка чугун</label>
+            <select id="targetGrade" class="input-field">
+              <option value="gjs500">EN-GJS-500-7 (C:3.6, Si:2.5, Mn:0.4, Cu:0.5)</option>
+              <option value="gjl200">EN-GJL-200 (C:3.3, Si:2.1, Mn:0.6, Cu:0.2)</option>
+              <option value="gjs400">EN-GJS-400-15 (C:3.7, Si:2.6, Mn:0.2, Cu:0.0)</option>
+            </select>
+          </div>
 
-  function autoSetPigIron() {
-    const targetW = parseFloat(targetWeightInput.value) || 2500;
-    pigIronInput.value = Math.round(targetW * 0.03);
-  }
+          <div class="form-group">
+            <label>Целево тегло на стопилката (kg)</label>
+            <input type="number" id="targetWeight" value="2500" class="input-field">
+          </div>
 
-  function calculate() {
-    const targetWeight = parseFloat(targetWeightInput.value) || 1;
-    const swampWeight = parseFloat(swampWeightInput.value) || 0;
-    
-    const swampData = gradesDB[swampGradeSelect.value] || gradesDB.gjs500;
-    const targetGradeData = gradesDB[targetGradeSelect.value] || gradesDB.gjs500;
-    
-    document.getElementById('targetCVal').innerText = targetGradeData.c.toFixed(2) + '%';
-    document.getElementById('targetSiVal').innerText = targetGradeData.si.toFixed(2) + '%';
-    document.getElementById('targetMnVal').innerText = targetGradeData.mn.toFixed(2) + '%';
-    document.getElementById('targetCuVal').innerText = targetGradeData.cu.toFixed(2) + '%';
-    
-    document.getElementById('tableSwampWeight').innerText = swampWeight + ' kg';
-    document.getElementById('targetWeightDisplay').innerText = targetWeight;
+          <div style="background: rgba(217, 119, 6, 0.15); border: 1.5px solid #d97706; padding: 10px; border-radius: 10px;" class="form-group">
+            <label style="color: #fbbf24; font-weight: 900;">🌊 ОСТАТЪК В ПЕЩТА (БЛАТО)</label>
+            <select id="swampGrade" class="input-field" style="background: #fef3c7; margin-bottom: 8px;">
+              <option value="gjs500">Блато от GJS-500-7</option>
+              <option value="gjl200">Блато от GJL-200</option>
+              <option value="gjs400">Блато от GJS-400-15</option>
+            </select>
+            <label style="color: #fbbf24;">Тегло на блатото (kg)</label>
+            <input type="number" id="swampWeight" value="350" class="input-field" style="background: #fef3c7;">
+          </div>
+        </div>
 
-    let addedWeight = 0;
-    let totalC_kg = swampWeight * (swampData.c / 100);
-    let totalSi_kg = swampWeight * (swampData.si / 100);
-    let totalMn_kg = swampWeight * (swampData.mn / 100);
-    let totalCu_kg = swampWeight * (swampData.cu / 100);
+        <div style="border-top: 2px solid #1e293b; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
+          <span style="color: #94a3b8;">Общо в пещта:</span>
+          <span style="color: #ffffff;"><span id="totalWeightDisplay">0</span> / <span id="targetWeightDisplay">2500</span> kg</span>
+        </div>
+      </div>
+    </section>
 
-    matInputs.forEach(input => {
-      const weight = parseFloat(input.value) || 0;
-      addedWeight += weight;
-      totalC_kg += weight * (parseFloat(input.dataset.c || 0) / 100);
-      totalSi_kg += weight * (parseFloat(input.dataset.si || 0) / 100);
-      totalMn_kg += weight * (parseFloat(input.dataset.mn || 0) / 100);
-      totalCu_kg += weight * (parseFloat(input.dataset.cu || 0) / 100);
-    });
+    <!-- КОЛОНА 2: ШИХТОВ СЪСТАВ -->
+    <section class="col-2">
+      <div class="card">
+        <div>
+          <div class="card-title"><span class="step-num">2</span> Шихтов състав</div>
 
-    const grandTotalWeight = swampWeight + addedWeight;
-    document.getElementById('totalWeightDisplay').innerText = grandTotalWeight;
-    document.getElementById('tableSwampPct').innerText = grandTotalWeight > 0 ? ((swampWeight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
-    
-    matInputs.forEach((input, index) => {
-      const weight = parseFloat(input.value) || 0;
-      matPctDisplays[index].innerText = grandTotalWeight > 0 ? ((weight / grandTotalWeight) * 100).toFixed(1) + '%' : '0%';
-    });
+          <table>
+            <thead>
+              <tr>
+                <th>МАТЕРИАЛ ЗА ЗАРЕЖДАНЕ</th>
+                <th style="width: 100px; text-align: center;">ТЕГЛО (KG)</th>
+                <th style="text-align: right; width: 50px;">%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background: rgba(217, 119, 6, 0.2);">
+                <td style="color: #fbbf24; font-weight: 900;">🌊 Блато (от предишна заварка)</td>
+                <td style="color: #fbbf24; font-weight: 900; text-align: center; font-size: 14px;" id="tableSwampWeight">350 kg</td>
+                <td style="text-align: right; font-weight: 900; color: #fbbf24; font-size: 14px;" id="tableSwampPct">14%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Стоманен скрап</td>
+                <td><input type="number" value="1000" class="mat-input table-input" data-c="0.1" data-si="0.15" data-mn="0.4" data-cu="0.05"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Собствен леяк</td>
+                <td><input type="number" value="950" class="mat-input table-input" data-c="3.6" data-si="2.5" data-mn="0.4" data-cu="0.5"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+              <tr style="background: rgba(249, 115, 22, 0.1);">
+                <td style="color: #fdba74; font-weight: 900;">🏷️ Нов чугун (Мин. 3%)</td>
+                <td><input type="number" id="pigIronWeight" value="75" class="mat-input table-input" style="background: #ffedd5;" data-c="4.2" data-si="1.2" data-mn="0.1" data-cu="0.0"></td>
+                <td style="text-align: right; font-weight: 900; color: #fdba74;" class="mat-pct">0%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Науглеродител (C)</td>
+                <td><input type="number" value="30" class="mat-input table-input" data-c="98" data-si="0" data-mn="0" data-cu="0"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Феросилиций (FeSi75)</td>
+                <td><input type="number" value="18" class="mat-input table-input" data-c="0" data-si="75" data-mn="0" data-cu="0"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Фероманган (FeMn75)</td>
+                <td><input type="number" value="5" class="mat-input table-input" data-c="1" data-si="0" data-mn="75" data-cu="0"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700;">Мед (Cu)</td>
+                <td><input type="number" value="10" class="mat-input table-input" data-c="0" data-si="0" data-mn="0" data-cu="99"></td>
+                <td style="text-align: right; font-weight: 900;" class="mat-pct">0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    if (grandTotalWeight > 0) {
-      const finalC = (totalC_kg / grandTotalWeight) * 100;
-      const finalSi = (totalSi_kg / grandTotalWeight) * 100;
-      const finalMn = (totalMn_kg / grandTotalWeight) * 100;
-      const finalCu = (totalCu_kg / grandTotalWeight) * 100;
+        <!-- Ясна и интуитивна секция за Спектрометър -->
+        <div class="lab-box">
+          <div class="lab-header">
+            <span class="lab-title">🧪 ЕКСПРЕСЕН АНАЛИЗ (СПЕКТРОМЕТЪР)</span>
+          </div>
+          <div class="lab-hint">
+            💡 Въведете намерените % от лабораторията. Калкулаторът веднага ще изчисли точното количество добавки за корекция.
+          </div>
+          <div class="lab-grid">
+            <div class="lab-item">
+              <label>Тегло (kg)</label>
+              <input type="number" id="labMeltWeight" value="2500" class="lab-input">
+            </div>
+            <div class="lab-item">
+              <label>% C</label>
+              <input type="number" step="0.01" id="labC" placeholder="—" class="lab-input">
+            </div>
+            <div class="lab-item">
+              <label>% Si</label>
+              <input type="number" step="0.01" id="labSi" placeholder="—" class="lab-input">
+            </div>
+            <div class="lab-item">
+              <label>% Mn</label>
+              <input type="number" step="0.01" id="labMn" placeholder="—" class="lab-input">
+            </div>
+            <div class="lab-item">
+              <label>% Cu</label>
+              <input type="number" step="0.01" id="labCu" placeholder="—" class="lab-input">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      valC.innerText = finalC.toFixed(2) + '%';
-      valSi.innerText = finalSi.toFixed(2) + '%';
-      valMn.innerText = finalMn.toFixed(2) + '%';
-      valCu.innerText = finalCu.toFixed(2) + '%';
+    <!-- КОЛОНА 3: ХИМИЯ & СЪВЕТ -->
+    <section class="col-3">
+      <div class="card">
+        <div>
+          <div class="card-title"><span class="step-num">3</span> Изчислена Химия</div>
 
-      generateBigOperatorAdvice(grandTotalWeight, targetWeight, finalC, targetGradeData.c, finalSi, targetGradeData.si, finalMn, targetGradeData.mn, finalCu, targetGradeData.cu);
-    }
-  }
+          <div class="chem-grid">
+            <div class="chem-item">
+              <div class="chem-header"><span>Въглерод (C)</span> <span>Цел: <span id="targetCVal">3.60%</span></span></div>
+              <div id="valC" class="chem-val" style="color: #34d399;">0.00%</div>
+            </div>
+            <div class="chem-item">
+              <div class="chem-header"><span>Силиций (Si)</span> <span>Цел: <span id="targetSiVal">2.50%</span></span></div>
+              <div id="valSi" class="chem-val" style="color: #fbbf24;">0.00%</div>
+            </div>
+            <div class="chem-item">
+              <div class="chem-header"><span>Манган (Mn)</span> <span>Цел: <span id="targetMnVal">0.40%</span></span></div>
+              <div id="valMn" class="chem-val" style="color: #22d3ee;">0.00%</div>
+            </div>
+            <div class="chem-item">
+              <div class="chem-header"><span>Мед (Cu)</span> <span>Цел: <span id="targetCuVal">0.50%</span></span></div>
+              <div id="valCu" class="chem-val" style="color: #fb7185;">0.00%</div>
+            </div>
+          </div>
 
-  function generateBigOperatorAdvice(totalW, targetW, c, tC, si, tSi, mn, tMn, cu, tCu) {
-    let advice = [];
-    const lW = parseFloat(labMeltWeight.value) || totalW;
-    const lC = parseFloat(labC.value);
-    const lSi = parseFloat(labSi.value);
-    const lMn = parseFloat(labMn.value);
-    const lCu = parseFloat(labCu.value);
+          <div class="advice-card">
+            <div class="advice-title">📢 ИНСТРУКЦИЯ ЗА ОПЕРАТОРА</div>
+            <div id="operatorAdvice" class="advice-body">Изчисляване...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    // Проверка за въведени данни от Спектрометър
-    if (!isNaN(lC) || !isNaN(lSi) || !isNaN(lMn) || !isNaN(lCu)) {
-      advice.push(`<span style="color: #60a5fa; font-size: 15px;">🧪 КОРЕКЦИЯ ПО СПЕКТРОМЕТЪР:</span>`);
-      if (!isNaN(lC) && lC < tC) advice.push(`• Добави <span style="color: #34d399; font-size: 16px;">${((((tC - lC) / 100) * lW) / 0.98).toFixed(1)} kg</span> Науглеродител`);
-      if (!isNaN(lSi) && lSi < tSi) advice.push(`• Добави <span style="color: #fbbf24; font-size: 16px;">${((((tSi - lSi) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeSi75`);
-      if (!isNaN(lMn) && lMn < tMn) advice.push(`• Добави <span style="color: #22d3ee; font-size: 16px;">${((((tMn - lMn) / 100) * lW) / 0.75).toFixed(1)} kg</span> FeMn75`);
-      if (!isNaN(lCu) && lCu < tCu) advice.push(`• Добави <span style="color: #fb7185; font-size: 16px;">${((((tCu - lCu) / 100) * lW) / 0.99).toFixed(1)} kg</span> Мед (Cu)`);
-    } else {
-      // Стандартни изчисления по шихта
-      const diffW = totalW - targetW;
-      if (Math.abs(diffW) > 5) {
-        if (diffW > 0) advice.push(`⚠️ <span style="color: #f87171;">Превишено тегло с ${diffW.toFixed(0)} kg!</span>`);
-        else advice.push(`⚖️ <span style="color: #fbbf24;">Не достигат ${Math.abs(diffW).toFixed(0)} kg до целта.</span>`);
-      }
+  <!-- FOOTER -->
+  <footer>
+    <div>FoundryIQ Systems | Шихтов калкулатор за леярни</div>
+    <div>v2.1 (Уедрен UI)</div>
+  </footer>
 
-      if (c < tC - 0.05) advice.push(`• Нисък C: Увеличете Науглеродителя с <span style="color: #34d399;">${(((tC - c)/100)*totalW/0.98).toFixed(1)} kg</span>`);
-      if (si < tSi - 0.05) advice.push(`• Нисък Si: Увеличете FeSi с <span style="color: #fbbf24;">${(((tSi - si)/100)*totalW/0.75).toFixed(1)} kg</span>`);
-      if (mn < tMn - 0.03) advice.push(`• Нисък Mn: Увеличете FeMn с <span style="color: #22d3ee;">${(((tMn - mn)/100)*totalW/0.75).toFixed(1)} kg</span>`);
-      if (cu < tCu - 0.03) advice.push(`• Нисък Cu: Увеличете Cu с <span style="color: #fb7185;">${(((tCu - cu)/100)*totalW/0.99).toFixed(1)} kg</span>`);
-    }
-
-    if (advice.length === 0) {
-      operatorAdvice.innerHTML = `<span style="color: #34d399; font-size: 16px;">✅ ГОТОВО ЗА ТЕНЕЦ!</span><br>Всички химически показатели съвпадат.`;
-    } else {
-      operatorAdvice.innerHTML = advice.join('<br>');
-    }
-  }
-
-  targetWeightInput.addEventListener('input', () => { autoSetPigIron(); calculate(); });
-  swampWeightInput.addEventListener('input', calculate);
-  targetGradeSelect.addEventListener('change', calculate);
-  swampGradeSelect.addEventListener('change', calculate);
-  matInputs.forEach(i => i.addEventListener('input', calculate));
-  [labMeltWeight, labC, labSi, labMn, labCu].forEach(i => i.addEventListener('input', calculate));
-
-  autoSetPigIron();
-  calculate();
-});
+  <script src="script.js"></script>
+</body>
+</html>
