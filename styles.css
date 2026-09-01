@@ -1,0 +1,53 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: #0b0f19;
+}
+
+.step-badge {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: 9999px;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* Увеличени входни полета с ясен контраст */
+.custom-input {
+  border: 2px solid #94a3b8;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+}
+
+.active-furnace {
+  background-color: #f97316 !important;
+  color: #090d16 !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+}
+
+.progress-track {
+  width: 100%;
+  background-color: #0b0f19;
+  height: 0.7rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  padding: 1px;
+  border: 1px solid #1e293b;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
