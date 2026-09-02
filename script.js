@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tableSwampText.textContent = swampW; 
 
     function getPct(val) {
-      return totalW > 0 ? ((val / totalW) * 100).toFixed(1) + '%' : '0.0%';
+      return targetW > 0 ? ((val / targetW) * 100).toFixed(1) + '%' : '0.0%';
     }
 
     pctSwamp.textContent = getPct(swampW);
@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 6. ПРИНТИРАНЕ НА ОТЧЕТ
+ 
   if (printReportBtn) {
     printReportBtn.addEventListener('click', () => {
       const furnaceCapacity = targetMeltWeight.value || '10000';
@@ -331,59 +332,104 @@ document.addEventListener('DOMContentLoaded', () => {
         recMn = Math.round(((targetObj.Mn - currentMn) * totalW / 100) * 1.8);
       }
 
+      // Филтриране само на материалите с тегло > 0
+      let materialsRowsHTML = '';
+      
+      
+      
+      
+      const scrapW = parseFloat(scrapInput.value) || 0;
+      if (scrapW > 0) {
+        materialsRowsHTML += `<tr><td>Стоманен скрап</td><td>${scrapW} kg</td></tr>`;
+      }
+      
+      const retGjsW = parseFloat(returnGjsInput.value) || 0;
+      if (retGjsW > 0) {
+        materialsRowsHTML += `<tr><td>Собствен възврат - Сферографитен чугун ВЧ (GJS)</td><td>${retGjsW} kg</td></tr>`;
+      }
+      
+      const retGjlW = parseFloat(returnGjlInput.value) || 0;
+      if (retGjlW > 0) {
+        materialsRowsHTML += `<tr><td>Собствен възврат - Сив чугун СЧ (GJL)</td><td>${retGjlW} kg</td></tr>`;
+      }
+      
+      const pigW = parseFloat(pigIronInput.value) || 0;
+      if (pigW > 0) {
+        materialsRowsHTML += `<tr><td>Нов чугун</td><td>${pigW} kg</td></tr>`;
+      }
+
+      // Филтриране само на коректорите с тегло > 0 или препоръка > 0
+      let additivesRowsHTML = '';
+      
+      const cW = parseFloat(cInput.value) || 0;
+      if (cW > 0 || recC > 0) {
+        const valToPrint = cW > 0 ? cW + ' kg' : recC + ' kg ';
+        additivesRowsHTML += `<tr><td>Навъглеродител (C)</td><td>${valToPrint}</td></tr>`;
+      }
+      
+      const fesiW = parseFloat(fesiInput.value) || 0;
+      if (fesiW > 0 || recSi > 0) {
+        const valToPrint = fesiW > 0 ? fesiW + ' kg' : recSi + ' kg ';
+        additivesRowsHTML += `<tr><td>Феросилиций (FeSi75)</td><td>${valToPrint}</td></tr>`;
+      }
+      
+      const femnW = parseFloat(femnWeightInput.value) || 0;
+      if (femnW > 0 || recMn > 0) {
+        const valToPrint = femnW > 0 ? femnW + ' kg' : recMn + ' kg ';
+        additivesRowsHTML += `<tr><td>Фероманган (FeMn75)</td><td>${valToPrint}</td></tr>`;
+      }
+      
+      const cuW = parseFloat(cuInput.value) || 0;
+      if (cuW > 0) {
+        additivesRowsHTML += `<tr><td>Мед (Cu)</td><td>${cuW} kg</td></tr>`;
+      }
+
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
         <html>
           <head>
-            <title>Шихтова карта - Прогрес </title>
+            <title>Шихтова карта - Прогрес</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
-              h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
+              body { font-family: Arial, sans-serif; padding: 20px; color: #333;}
+              h2 { 
+                border-bottom: 2px solid #333; 
+                padding-bottom: 8px; 
+                text-align: center; 
+                font-size: 26px; 
+              }
               table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; }
-              th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+              th, td { border: 1px solid #ccc; padding: 8px 8px; text-align: left;font-size: 16px; }
               th { background: #eee; }
-              .advice-box { background: #f9f9f9; border-left: 4px solid #2c3e50; padding: 10px; margin-top: 15px; }
             </style>
           </head>
           <body>
+          <img src="bg.png" alt="Лого на фирмата" style="max-height: 60px; width: auto;" />
             <h2>ПРОИЗВОДСТВЕН ОТЧЕТ - ШИХТОВА КАРТА</h2>
             
-            <!-- Тук вече излиза избраното име на пещта и вместимостта -->
-            <p><strong>Избрана пещ:</strong> ${selectedFurnaceName} (${furnaceCapacity} kg)</p>
+            <p style="text-align: right; font-size: 14px; color: #555; margin-bottom: 15px;"><strong></strong> ${dateTimeStr}</p>
             
-            <p><strong>Целева марка чугун:</strong> ${targetGradeName}</p>
-            <p><strong>Марка на блатото:</strong> ${swampGradeName}</p>
-            <p><strong>Общо тегло на добавките:</strong> ${totalWeightDisplay.textContent} kg</p>
+            <p style="text-align: center; font-size: 17px;"><strong>Избрана пещ:</strong> <span style="font-size: 25px; font-weight: bold;">${selectedFurnaceName}</span> (${furnaceCapacity} kg)</p>
             
-            <h3>Влагане на основни материали:</h3>
-            <table>
-              <tr><th>Материал</th><th>Въведено тегло (kg)</th><th>Процент (%)</th></tr>
-              <tr><td>Блато (Стопен чугун)</td><td>${swampWeightInput.value || 0} kg</td><td>${pctSwamp.textContent}</td></tr>
-              <tr><td>Стоманен скрап</td><td>${scrapInput.value || 0} kg</td><td>${pctScrap.textContent}</td></tr>
-              <tr><td>Собствен възврат - Сферографитен чугун ВЧ (GJS)</td><td>${returnGjsInput.value || 0} kg</td><td>${pctReturnGjs.textContent}</td></tr>
-              <tr><td>Собствен възврат - Сив чугун СЧ (GJL)</td><td>${returnGjlInput.value || 0} kg</td><td>${pctReturnGjl.textContent}</td></tr>
-              <tr><td>Нов чугун</td><td>${pigIronInput.value || 0} kg</td><td>${pctPigIron.textContent}</td></tr>
-            </table>
-
-            <h3>Влагане на коректори и добавки:</h3>
-            <table>
-              <tr><th>Коректор</th><th>Въведено / Изчислено тегло (kg)</th></tr>
-              <tr><td>Навъглеродител (C)</td><td>${cInput.value > 0 ? cInput.value : recC} kg ${cInput.value == 0 && recC > 0 ? '(препоръка)' : ''}</td></tr>
-              <tr><td>Феросилиций (FeSi75)</td><td>${fesiInput.value > 0 ? fesiInput.value : recSi} kg ${fesiInput.value == 0 && recSi > 0 ? '(препоръка)' : ''}</td></tr>
-              <tr><td>Фероманган (FeMn75)</td><td>${femnInput.value > 0 ? femnInput.value : recMn} kg ${femnInput.value == 0 && recMn > 0 ? '(препоръка)' : ''}</td></tr>
-              <tr><td>Мед (Cu)</td><td>${cuInput.value || 0} kg</td></tr>
-            </table>
-
-            <h3>Изчислен химичен състав:</h3>
-            <ul>
-              <li>Въглерод (C): <strong>${valC.textContent}</strong> (Цел: ${targetObj.C.toFixed(2)}%)</li>
-              <li>Силиций (Si): <strong>${valSi.textContent}</strong> (Цел: ${targetObj.Si.toFixed(2)}%)</li>
-              <li>Манган (Mn): <strong>${valMn.textContent}</strong> (Цел: ${targetObj.Mn.toFixed(2)}%)</li>
-              <li>Мед (Cu): <strong>${valCu.textContent}</strong> (Цел: ${targetObj.Cu.toFixed(2)}%)</li>
-            </ul>
-
+            <p style="text-align: center; font-size: 17px;"><strong>Марка чугун:</strong> <span style="font-size: 25px; font-weight: bold;">${targetGradeName}</span> </p>
             
-            <p><strong>Дата и час:</strong> ${dateTimeStr}</p>
+           
+            
+            ${materialsRowsHTML !== '' ? `
+              <h3>Влагане на основни материали:</h3>
+              <table>
+                <tr><th>Материал</th><th>Въведено тегло (kg)</th></tr>
+                ${materialsRowsHTML}
+              </table>
+            ` : ''}
+
+            ${additivesRowsHTML !== '' ? `
+              <h3>Влагане на коректори и добавки:</h3>
+              <table>
+                <tr><th>Коректор</th><th>Въведено / Изчислено тегло (kg)</th></tr>
+                ${additivesRowsHTML}
+              </table>
+            ` : ''}
+
             
 
             <script>
