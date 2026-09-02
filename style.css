@@ -401,3 +401,19 @@ body {
   width: 100%;
   margin-top: auto;
 }
+
+#toggleCustomSwampBtn {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#toggleCustomSwampBtn:hover {
+  background-color: #1a252f; /* Малко по-тъмен цвят при минаване с мишката */
+}
