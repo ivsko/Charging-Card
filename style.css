@@ -417,3 +417,33 @@ body {
 #toggleCustomSwampBtn:hover {
   background-color: #1a252f; /* Малко по-тъмен цвят при минаване с мишката */
 }
+
+/* МИНИМАЛНИ СТИЛОВЕ ЗА ЛАБОРАТОРНИЯ АНАЛИЗ (ПАСВАТ НА ТВОЯ ДИЗАЙН) */
+.lab-analysis-section {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lab-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.lab-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lab-input-group label {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 600;
+}
