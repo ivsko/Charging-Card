@@ -21,8 +21,8 @@ const MATERIALS_DATA = {
   pigIron:   { C: 4.5, Si: 0.6, Mn: 0.01, Cu: 0.00 }, // Нов чугун (тук слагаш реалния % на твоя чугун, напр. 4.3% или 4.5%)
   
   // Добавки с коефициент на усвояване (yield)
-  carbonizer: { element: 'C', yield: 0.80, addsKgPerKg: 0.98 }, 
-  fesi:       { element: 'Si', yield: 0.92, contentInFeSi: 0.75 }, 
-  femn:       { element: 'Mn', yield: 0.90, contentInFeMn: 0.70 }, 
-  copper:     { element: 'Cu', yield: 0.95 }
+  carbonizer: { element: 'C', yield: 0.71, addsKgPerKg: 0.98 }, 
+  fesi:       { element: 'Si', yield: 0.90, contentInFeSi: 0.75 }, 
+  femn:       { element: 'Mn', yield: 0.80, contentInFeMn: 0.75 }, 
+  copper:     { element: 'Cu', yield: 0.99 }
 };
