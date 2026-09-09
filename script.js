@@ -1007,101 +1007,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 }
   // 7. ЛАБОРАТОРНИ КОРЕКЦИИ (Използва целевото тегло на пещта, за да работи по всяко време)
-  if (calcCorrectionBtn) {
-    calcCorrectionBtn.addEventListener('click', () => {
-      const targetW = parseFloat(targetMeltWeight.value) || 0;
-      if (targetW <= 0) {
-        alert('Моля, изберете пещ или въведете целево тегло!');
-        return;
-      }
 
-      const labC = parseFloat(labCInput.value) || 0;
-      const labSi = parseFloat(labSiInput.value) || 0;
-      const labMn = parseFloat(labMnInput.value) || 0;
-      const labCu = parseFloat(labCuInput.value) || 0;
 
-      const currentGrade = targetGradeSelect.value;
-      const targets = TARGET_GRADES[currentGrade];
-
-      let correctionAdvice = [];
-
-      const missingC_pct = targets.C - labC;
-      if (missingC_pct > 0.05) {
-        const missingCKg = (missingC_pct / 100) * targetW;
-        const safeC = Math.round((missingCKg / MATERIALS_DATA.carbonizer.yield) * 0.8);
-        if (safeC > 0) {
-          correctionAdvice.push(`⚠️ Добавете ${safeC} kg Навъглеродител.`);
-        }
-      }
-
-      const missingSi_pct = targets.Si - labSi;
-      if (missingSi_pct > 0.05) {
-        const missingSiKg = (missingSi_pct / 100) * targetW;
-        const effectiveSiYield = MATERIALS_DATA.fesi.yield * MATERIALS_DATA.fesi.contentInFeSi;
-        const safeSi = Math.round((missingSiKg / effectiveSiYield) * 0.8);
-        if (safeSi > 0) {
-          correctionAdvice.push(`⚠️ Добавете ${safeSi} kg Феросилиций (FeSi75).`);
-        }
-      }
-
-      const missingMn_pct = targets.Mn - labMn;
-      if (missingMn_pct > 0.05) {
-        const missingMnKg = (missingMn_pct / 100) * targetW;
-        const effectiveMnYield = MATERIALS_DATA.femn.yield * MATERIALS_DATA.femn.contentInFeMn;
-        const safeMn = Math.round((missingMnKg / effectiveMnYield) * 0.8);
-        if (safeMn > 0) {
-          correctionAdvice.push(`⚠️Добавете ${safeMn} kg Фероманган (FeMn75).`);
-        }
-      }
-
-      const missingCu_pct = targets.Cu - labCu;
-      if (missingCu_pct > 0.03) {
-        const missingCuKg = (missingCu_pct / 100) * targetW;
-        const safeCu = Math.round((missingCuKg / MATERIALS_DATA.copper.yield) * 0.8);
-        if (safeCu > 0) {
-          correctionAdvice.push(`⚠️Добавете ${safeCu} kg Мед (Cu).`);
-        }
-      }
-
-      operatorAdvice.innerHTML = '';
-
-      if (correctionAdvice.length === 0) {
-        if (adviceBoxContainer) {
-          adviceBoxContainer.style.backgroundColor = 'rgba(16, 185, 129, 0.12)';
-          adviceBoxContainer.style.borderColor = '#34d399';
-          adviceBoxContainer.style.minHeight = '60px';
-        }
-        operatorAdvice.style.color = '#34d399';
-        operatorAdvice.style.fontSize = '15px';
-        operatorAdvice.style.fontWeight = '700';
-        
-        const p = document.createElement('div');
-        p.textContent = '✅ Лабораторният анализ е перфектен! Няма нужда от корекции.';
-        operatorAdvice.appendChild(p);
-      } else {
-        if (adviceBoxContainer) {
-          adviceBoxContainer.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
-          adviceBoxContainer.style.borderColor = '#f87171';
-          adviceBoxContainer.style.minHeight = (correctionAdvice.length * 45 + 30) + 'px';
-        }
-        
-        operatorAdvice.style.color = '#f87171';
-        operatorAdvice.style.fontSize = '16px';
-        operatorAdvice.style.fontWeight = '800';
-
-        correctionAdvice.forEach(adviceText => {
-          const rowDiv = document.createElement('div');
-          rowDiv.style.marginBottom = '8px';
-          rowDiv.textContent = adviceText;
-          operatorAdvice.appendChild(rowDiv);
-        });
-      }
-    });
-  }
-
+ // Функция за съвети към оператора въз основа на първоначалната шихта
   function generateAdvice(c, si, mn, targets, totalW) {
     let adviceList = [];
-    const totalWeight = parseFloat(totalWeightDisplay.textContent) || 0;
+    const totalWeight = parseFloat(totalWeightDisplay?.textContent) || 0;
 
     if (totalWeight > 0) {
       const missingC_pct = targets.C - c;
@@ -1170,6 +1081,15 @@ document.addEventListener('DOMContentLoaded', () => {
         operatorAdvice.appendChild(rowDiv);
       });
     }
+  }
+
+  // Бутон ИЗЧИСЛИ
+  if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => {
+      if (typeof window.trackAction === 'function') {
+        window.trackAction('calculate');
+      }
+    });
   }
     // Бутон ИЗЧИСЛИ
   if (calculateBtn) {
