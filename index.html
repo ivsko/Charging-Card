@@ -5,6 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FoundryIQ - Шихтова Карта</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, updateDoc, increment, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Замени с твоите данни от Firebase:
+  const firebaseConfig = {
+    apiKey: "AIzaSyBB9wO7HRD1rzMXUKlJG-NHsIoMBOCDY1M",
+
+authDomain: "charging-card-57fd4.firebaseapp.com",
+
+databaseURL: "https://charging-card-57fd4-default-rtdb.europe-west1.firebasedatabase.app",
+
+projectId: "charging-card-57fd4",
+
+storageBucket: "charging-card-57fd4.firebasestorage.app",
+
+messagingSenderId: "425390066683",
+
+appId: "1:425390066683:web:ab45a33721050e3073195e"
+
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 1. Глобална функция за увеличаване на брояча
+  window.trackAction = async function(actionType) {
+    const counterRef = doc(db, "stats", "usage_counters");
+    try {
+      await updateDoc(counterRef, {
+        [actionType + 'Count']: increment(1),
+        lastUsed: new Date().toISOString()
+      });
+    } catch (e) {
+      await setDoc(counterRef, {
+        calculateCount: actionType === 'calculate' ? 1 : 0,
+        printCount: actionType === 'print' ? 1 : 0,
+        lastUsed: new Date().toISOString()
+      }, { merge: true });
+    }
+  };
+
+  // 2. Глобална функция за запис на картата
+  window.saveMeltData = async function(meltRecord) {
+    try {
+      await addDoc(collection(db, "melts_history"), meltRecord);
+    } catch (e) {
+      console.error("Грешка при фонов запис:", e);
+    }
+  };
+</script>
 </head>
 <body>
 
