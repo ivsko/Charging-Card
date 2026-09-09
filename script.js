@@ -1171,6 +1171,63 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+    // Бутон ИЗЧИСЛИ
+  if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => {
+      // Извиква вече съществуващото събитие или сигурния скрит брояч
+      if (typeof window.trackAction === 'function') {
+        window.trackAction('calculate');
+      }
+    });
+  }
+
+  // Бутон ПРИНТИРАЙ
+  if (printReportBtn) { // Променено от printBtn на printReportBtn
+    printReportBtn.addEventListener('click', () => {
+      const currentCapacity = targetMeltWeight ? targetMeltWeight.value : '10000';
+
+      // 1. Събиране на данните от картата
+      const record = {
+        timestamp: new Date().toISOString(),
+        dateFormatted: new Date().toLocaleString('bg-BG'),
+        furnaceCapacity: currentCapacity + ' kg',
+        targetGrade: targetGradeSelect ? targetGradeSelect.value : '',
+        weights: {
+          swamp: parseFloat(swampWeightInput?.value) || 0,
+          returnGjs: parseFloat(returnGjsInput?.value) || 0,
+          returnGjl: parseFloat(returnGjlInput?.value) || 0,
+          pigIron: parseFloat(pigIronInput?.value) || 0,
+          scrap: parseFloat(scrapInput?.value) || 0, // Поправено от scrapWeightInput
+          carburizer: parseFloat(cInput?.value) || 0, // Поправено от cWeightInput
+          fesi: parseFloat(fesiInput?.value) || 0,   // Поправено от fesiWeightInput
+          femn: parseFloat(femnInput?.value) || 0,   // Поправено от femnWeightInput
+          cu: parseFloat(cuInput?.value) || 0,
+          total: parseFloat(totalWeightDisplay?.innerText) || 0
+        },
+        chemistry: {
+          C: valC ? valC.innerText : '0%',
+          Si: valSi ? valSi.innerText : '0%',
+          Mn: valMn ? valMn.innerText : '0%',
+          Cu: valCu ? valCu.innerText : '0%'
+        }
+      };
+
+      // 2. Фоново записване на картата + увеличениe на брояча за принт
+      if (typeof window.saveMeltData === 'function') {
+        window.saveMeltData(record);
+      }
+      if (typeof window.trackAction === 'function') {
+        window.trackAction('print');
+      }
+    });
+  }
+
+  updateTargetsDisplay();
+  
+  if (furnaceBtns.length > 0) {
+    furnaceBtns[0].click();
+  }
+
 
   updateTargetsDisplay();
   
