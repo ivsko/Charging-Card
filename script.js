@@ -1192,6 +1192,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dateFormatted: new Date().toLocaleString('bg-BG'),
         furnaceCapacity: currentCapacity + ' kg',
         targetGrade: targetGradeSelect ? targetGradeSelect.value : '',
+        swampType: (swampGradeSelect && swampGradeSelect.selectedIndex >= 0) 
+    ? (swampGradeSelect.value || swampGradeSelect.options[swampGradeSelect.selectedIndex].text) 
+    : 'Няма',
         weights: {
           swamp: parseFloat(swampWeightInput?.value) || 0,
           returnGjs: parseFloat(returnGjsInput?.value) || 0,
