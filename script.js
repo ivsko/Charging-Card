@@ -1145,11 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  updateTargetsDisplay();
-  
-  if (furnaceBtns.length > 0) {
-    furnaceBtns[0].click();
-  }
+
 
 
   updateTargetsDisplay();
